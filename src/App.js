@@ -1,189 +1,142 @@
 import EditorCmponent from "./component/EditorCmponent";
 import FileTree from "./component/FileTree";
-import { Box, Grid ,Button, Stack} from '@chakra-ui/react';
+import {Flex,Box,Button} from '@chakra-ui/react';
 import React, { useState } from 'react';
 import data from "./component/data";
 import Navbar from "./component/Navbar";
 import Comment from "./component/Comment";
-import MiniOption from "./component/MiniOption";
-import useMenuRightClick from "./component/onMenuRightClick";
+import ContextMenu from "./component/ContextMenu";
 
 
   const App = () => {
-
-    const { x, y, showMenu } = useMenuRightClick();
+ //define 
+   
+    const [showFileTree, setShowFileTree] = useState(true);
 
     const [currentFile, setCurrentFile] = useState(null);
-    const [files, setFiles] = useState(data);
+    const [files] = useState(data);
+//handle
 
     const handleFileSelect = (file) => {
       setCurrentFile(file);
     };
 
+  
     const handleContentChange = (newContent) => {
       setCurrentFile((prevFile) => ({
         ...prevFile,
         content: newContent,
       }));
     };
-    const saveFile = () => {
-      const updateFiles = (items) => {
-        return items.map(item => {
-          if (item.type === 'folder') {
-            return { ...item, children: updateFiles(item.children) };
-          } else if (item.name === currentFile.name) {
-            return { ...item, content: currentFile.content };
-          } else {  
-            return item;
-          }
-        });
-      };
-      setFiles(updateFiles(files));
+    
+    const toggleFileTree = () => {
+      setShowFileTree(!showFileTree);
     };
-
-    const handleAddFile = (fileName, parentFolder) => {
-      const newFile = {
-        name: fileName,
-        type: 'file',
-        content: '// Your file content here'
-      };
-    
-      const addFileToFolder = (folder) => {
-        return {
-          ...folder,
-          children: [...folder.children, newFile]
-        };
-      };
-
-      const updateFiles = (files) => {
-        return files.map(item => {
-          if (item.name === parentFolder.name && item.type === 'folder') {
-            return addFileToFolder(item);
-          }
-          if (item.children) {
-            return {
-              ...item,
-              children: updateFiles(item.children)
-            };
-          }
-          return item;
-        });
-      };
-    
-      setFiles(prevFiles => updateFiles(prevFiles));
+    const onUpload = () => {
+      document.getElementById("fileInput").click();
     };
-    
-    const handleAddFolder = (folderName, parentFolder) => {
-      const newFolder = {
-        name: folderName,
-        type: 'folder',
-        children: []
-      };
-    
-      const addFolderToFolder = (folder) => {
-        return {
-          ...folder,
-          children: [...folder.children, newFolder]
-        };
-      };
-    
-      const updateFiles = (files) => {
-        return files.map(item => {
-          if (item.name === parentFolder.name && item.type === 'folder') {
-            return addFolderToFolder(item);
-          }
-          if (item.children) {
-            return {
-              ...item,
-              children: updateFiles(item.children)
-            };
-          }
-          return item;
-        });
-      };
-    
-      setFiles(prevFiles => updateFiles(prevFiles));
+    const handleFileChange = (event) => {
+      const file = event.target.files[0];
+      console.log("Đã chọn tệp:", file);
     };
-
-    const [showChildren, setShowChildren] = useState(true);
-
-    const handleToggle = () => {
-        setShowChildren(!showChildren);
-    };
-
+//render ui
     return (
       <Box width="100vw" height="100vh">
-        {currentFile && (
-          <Box onClick={saveFile} bg="#eeeeee" h='25px'>
-            {currentFile && (
-              <Button
-                marginTop="2px"
-                colorScheme="blue"
-                size="md"
-                variant="solid"
-                w="50px"
-                color="white"
-                backgroundColor="black" 
-                borderRadius = "5px"
-                border="0px"
-                onClick={saveFile}
-              >
-                Save
-              </Button>
-            )}
-          </Box>
-        )}
-        <Grid templateColumns="2fr 8fr" height="100%">
-          <Box borderRight="1px solid #ddd">
-            <Grid templateColumns="1fr 9fr" height="100%">
-              <Box>
-                {showMenu && (
-                  <div
-                    style={{
-                      position: "fixed",
-                      top: y,
-                      left: x,
-                      backgroundColor: "#dddddd",
-                      boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+        <input
+        id="fileInput"
+        type="file"
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
+      <Box>
+      <Box bg="#eeeeee" h="30px">
+            <Flex justifyContent="flex-start" gap={3}>
+                <Button
+                  ml="29px"
+                  colorScheme="blue"
+                  size="md"
+                  variant="solid"
+                  w="40px"
+                  h="29px"
+                  color="black"
+                  backgroundColor="#d65bb7;" 
+                  borderRadius = "2px"
+                  border="0px"
+                  _hover={{
+                    bg: "#818181",
+                    textDecoration: "underline",
+                  }}
+                >
+                  Back
+                </Button>
+                {currentFile && (
+                  <Button
+                    colorScheme="blue"
+                    size="md"
+                    variant="solid"
+                    w="40px"
+                    color="black"
+                    backgroundColor="#d65bb7" 
+                    borderRadius = "2px"
+                    border="0px"
+                    // onClick={saveFile}
+                    _hover={{
+                      bg: "#818181",
+                      textDecoration: "underline",
                     }}
                   >
-                    <div>New File...</div>
-                    <div>New Folder...</div>
-                  </div>
-                )}
-                <Navbar
-                   onClick={() => setShowChildren(!showChildren)}
-                />
-              </Box>
-              {showChildren && (
-                <Grid templateRows="3% 97%">
-                <MiniOption />
-                <FileTree 
-                  onAddFolder={handleAddFolder}
-                  onAddFile={handleAddFile}
-                  data={data} 
-                  onFileSelect={handleFileSelect} 
-                />
-              </Grid>
-              )}
-              
-            </Grid>
+                    Save
+                  </Button>
+                  )}
+            </Flex>
           </Box>
-          <Stack spacing={5}>
-            <Box>
-              <EditorCmponent 
-                file={currentFile} 
-                onContentChange={handleContentChange} 
-              />
+      </Box>
+      <Flex flexDirection="row" height="100%">
+        <Box borderRight="1px solid #ddd">
+          <Flex flexDirection="row" height="100%">
+          <ContextMenu></ContextMenu>
+            <Navbar 
+              onSelectFile={handleFileSelect} 
+              onCommit={() => {}} 
+              toggleFileTree={toggleFileTree}
+              onUpload={onUpload}
+            />
+            <Box >
+              {showFileTree && (
+                <FileTree 
+                  data={files} 
+                  onFileSelect={handleFileSelect} 
+                  // onAddFolder={handleAddFolder}
+                  // onAddFile={handleAddFile}
+                  // onRename={handleRename}
+                  // onDelete={handleDelete}
+                  className="file-tree"
+                />
+              )}
+            </Box>
+          </Flex>
+        </Box>
+        <Box flex="1">
+          <Box h="20px">
+          </Box>
+          <Flex flexDirection="column" height="90%">
+            <Box flex="1">
+              {currentFile && (
+                <EditorCmponent 
+                  file={currentFile} 
+                  onContentChange={handleContentChange}
+                />
+              )}
             </Box>
             <Box bg="#dddddd">
               <Comment />
-            </Box> 
-          </Stack>
-        </Grid>
-      </Box>
+            </Box>
+          </Flex>
+        </Box>
+      </Flex>
+    </Box>
     );
-    
   };
-
+  
   export default App;
+

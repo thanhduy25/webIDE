@@ -3,19 +3,25 @@ import { Box, Flex, Text, Icon } from '@chakra-ui/react';
 import { MdFolder, MdInsertDriveFile } from 'react-icons/md';
 
 
-const TreeItem = ({ item, onFileSelect }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const TreeItem = ({ item, onFileSelect, onAddFolder,onAddFile}) => {
+  const [isOpenfile, setIsOpenfile] = useState(false);
 
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
+  const handleTogglefile = () => {
+    setIsOpenfile(!isOpenfile);
   };
+  
   return (
     <Box>
       <Flex 
         width='100%' 
         height='20px' 
         alignItems="center" 
-        onClick={item.type === 'folder' ? handleToggle : () => onFileSelect(item)} cursor="pointer" margin="5px"
+        onClick={item.type === 'folder' ? handleTogglefile : () => onFileSelect(item)}
+        margin="5px"
+        _hover={{
+          bg: "#ececec",
+          textDecoration: "underline",
+        }}
         >
         {item.type === 'folder' ? (
           <Icon as={MdFolder} />
@@ -24,7 +30,7 @@ const TreeItem = ({ item, onFileSelect }) => {
         )}
         <Text ml="3">{item.name}</Text>
       </Flex>
-      {isOpen && item.children && (
+      {isOpenfile && item.children && (
         <Box pl="10px" mt='5px'>
           {item.children.map((child, index) => (
             <TreeItem key={index} item={child} onFileSelect={onFileSelect} />
@@ -36,6 +42,3 @@ const TreeItem = ({ item, onFileSelect }) => {
 };
 
 export default TreeItem;
-
-
-

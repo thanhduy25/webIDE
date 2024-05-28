@@ -1,8 +1,9 @@
 import { Box } from '@chakra-ui/react';
 import Editor from '@monaco-editor/react';
+import React from 'react';
 
-const EditorCmponent = ({ file, onContentChange }) => {
-    
+const EditorCmponent = ({file, onContentChange }) => {
+
     if (!file) {
       return <Editor 
       theme = "vs-light"
@@ -23,9 +24,10 @@ const EditorCmponent = ({ file, onContentChange }) => {
         defaultLanguage="javascript"
         value={file.content}
         onChange={handleChange} 
+        
         /> 
     </Box> 
   )
 }
 
-export default EditorCmponent  
+export default EditorCmponent;

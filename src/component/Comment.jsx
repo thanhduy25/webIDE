@@ -11,7 +11,7 @@ const Comment = () => {
           <MdArrowDropDown />Comment
         </Button>
        <Collapse in={isOpen} animateOpacity>
-        <Stack bg="#eeeeee" spacing="5px" height="130px">
+        <Stack  spacing="5px" height="70%">
           <Textarea
             backgroundColor="#eeeeee"
             placeholder="Enter comment..."
@@ -56,9 +56,7 @@ const Comment = () => {
           >
             Back
           </Button>
-          
           </Box>
-          
         </Stack>
         </Collapse>
     </>
