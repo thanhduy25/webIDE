@@ -3,7 +3,7 @@ import { FaFileUpload,FaFile ,FaGitAlt } from 'react-icons/fa';
 import React, { useState } from 'react';
 
 
-const Navbar = ({onCommit, onUpload, toggleFileTree }) => {
+const Navbar = ({toggleCommit, onUpload, toggleFileTree }) => {
   const [showChildren, setShowChildren] = useState(true);
 
   const handleToggle = () => {
@@ -20,7 +20,7 @@ const Navbar = ({onCommit, onUpload, toggleFileTree }) => {
     <Box  bg="#eeeeee" color="black" width="30px" height="100%" display="flex" flexDirection="column" alignItems="center" py={4}>
       <VStack spacing={12}>
         <Tooltip placement="right">
-            <IconButton 
+            <IconButton
               icon={<FaFile style={{fontSize:'20px' }} />}
               variant="ghost"
               colorScheme="whiteAlpha"
@@ -33,7 +33,7 @@ const Navbar = ({onCommit, onUpload, toggleFileTree }) => {
         <Tooltip placement="right">
           <IconButton
             icon={<FaGitAlt style={{fontSize:'20px'  }} />}
-            onClick={onCommit}
+            onClick={toggleCommit}
             variant="ghost"
             colorScheme="whiteAlpha"
             style={{ backgroundColor: 'transparent' }}

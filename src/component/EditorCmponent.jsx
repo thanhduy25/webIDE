@@ -24,7 +24,6 @@ const EditorCmponent = ({file, onContentChange }) => {
         defaultLanguage="javascript"
         value={file.content}
         onChange={handleChange} 
-        
         /> 
     </Box> 
   )

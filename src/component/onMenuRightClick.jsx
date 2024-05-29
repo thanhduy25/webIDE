@@ -23,7 +23,7 @@ export default function useMenuRightClick() {
       document.removeEventListener("click", handleClick);
       document.removeEventListener("contextmenu", handleContextMenu);
     };
-  }, [showMenu]); // Thêm showMenu vào dependency array
+  }, [showMenu]);
 
   return { x, y, showMenu };
 }
