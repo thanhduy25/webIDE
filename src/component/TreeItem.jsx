@@ -24,7 +24,7 @@ const TreeItem = ({ item, onFileSelect, onAddFolder,onAddFile}) => {
         }}
         >
         {item.type === 'tree' ? (
-          <Icon as={MdFolder} />
+          <Icon color="#e7722d" as={MdFolder} />
         ) : ( 
           <Icon color ='#dddddd' as={MdInsertDriveFile} />
         )}

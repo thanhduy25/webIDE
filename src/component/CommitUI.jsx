@@ -36,27 +36,30 @@ const CommitUI = ({ onCommit}) => {
   });
 
 
-  const handleCommitClick = () => {
-    onCommit(commitMessage);
-    setCommitMessage('');
-  };
+  // const handleCommitClick = () => {
+  //   onCommit(commitMessage);
+  //   setCommitMessage('');
+  // };
 
   return (
-    <div ref={containerRef} style={{ position: "relative", height: treeHeight}}>
-    <div style={{height:treeHeight, width: treeWidth, transition: "width 0.001s", borderRight: "1px solid #ddd", overflow: "hidden" }}>
-      <div style={{ position: "absolute", width: "10px", height: "100%", right: "0", top: "0", cursor: "col-resize" }} onMouseDown={handleMouseDown}></div>
+    <Box ref={containerRef} style={{ position: "relative", height: treeHeight}}>
+    <Box style={{height:treeHeight, width: treeWidth, transition: "width 0.001s", borderRight: "1px solid #ddd", overflow: "hidden" }}>
+      <Box style={{ position: "absolute", width: "10px", height: "100%", right: "0", top: "0", cursor: "col-resize" }} onMouseDown={handleMouseDown}></Box>
       <Box>
-      <Input
-        placeholder="Enter commit message"
-        value={commitMessage}
-        onChange={(e) => setCommitMessage(e.target.value)}
-      />
-      <Flex mt={2} justifyContent="space-between">
-        <Button border="0px" borderRadius="3px" bg="#d65bb7" colorScheme="blue" w="170px" >Commit</Button>
+        <Flex mt={2} justifyContent="flex">
+            <Input
+            placeholder="Enter commit message"
+            value={commitMessage}
+            onChange={(e) => setCommitMessage(e.target.value)}
+            w="900px"
+          />
+        </Flex>
+      <Flex mt={2} justifyContent="flex">
+        <Button border="0px" borderRadius="3px" bg="#d65bb7" colorScheme="blue" w="908px" >Commit</Button>
       </Flex>
     </Box> 
-    </div>
-  </div>
+    </Box>
+  </Box>
 );
 };
 

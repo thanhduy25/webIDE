@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
 import TreeItem from './TreeItem';
 
-const FileTree = ({ data, onFileSelect, onAddFolder }) => {
+const FileTree = ({ data, onFileSelect}) => {
   const [isResizing, setIsResizing] = useState(false);
   const [initialWidth, setInitialWidth] = useState(null);
-  const [treeWidth, setTreeWidth] = useState("130px");
+  const [treeWidth, setTreeWidth] = useState("170px");
   const [treeHeight] = useState("100vh");
 
   const containerRef = useRef(null);
@@ -34,8 +34,6 @@ const FileTree = ({ data, onFileSelect, onAddFolder }) => {
       document.removeEventListener("mouseup", handleMouseUp);
     };
   });
-
-  
 
   return (
     <div ref={containerRef} style={{ position: "relative", height: treeHeight}}>

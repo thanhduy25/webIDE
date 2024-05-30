@@ -1,6 +1,6 @@
-import EditorCmponent from "./component/EditorCmponent";
+import EditorComponent from "./component/EditorComponent";
 import FileTree from "./component/FileTree";
-import {Flex,Box,Link,Button} from '@chakra-ui/react';
+import {Flex,Box,Link,Button,ChakraProvider,useColorMode} from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 import Navbar from "./component/Navbar";
 import Comment from "./component/Comment";
@@ -9,24 +9,49 @@ import CommitUI from "./component/CommitUI";
 import data from "./component/data.js";
 import axios from "axios";
 
-  const App = () => {
+  function App() {
  //define 
     const [showFileTree, setShowFileTree] = useState(true);
     const [currentFile, setCurrentFile] = useState(null);
     const [files, setFiles] = useState(data);
     const [listFile, setListFile] = useState([]);
+    const [fileContent, setFileContent] = useState('');
+    // const { colorMode, toggleColorMode } = useColorMode();
+
 
 
 //handle
 
       const getFileTree = () => {
-        axios.get('http://localhost/mod/gitlab/api/index.php/repository/tree?id=1')
+        axios.get('http://localhost/mod/gitlab/api/index.php/repository/tree?id=1&recursive=true')
           .then(res => {
+            console.log(res.data.data);
             setListFile(res.data.data);
           })
           .catch(error => {
             console.error('Error fetching list of files:', error);
           });
+      };
+
+      const getFileContent = (file) => {
+        axios.get('http://localhost/mod/gitlab/api/index.php/repository/files?id=1&file_path=FI_5.txt')
+          .then(res => {
+            setFileContent(res.data.data);
+          })
+          .catch(error => {
+            console.error('Error fetching file content:', error);
+          });
+      };
+      // const handleFileSelect = (file) => {
+      //   setCurrentFile(file);
+      //   getFileContent(file);
+      // };
+
+      const handleContentChange = (content) => {
+       
+        console.log('Content changed:', content);
+        setFileContent(content);
+        saveFileContent(currentFile, content);
       };
 
       useEffect(() => {
@@ -59,40 +84,15 @@ import axios from "axios";
         if (showFileTree) setShowFileTree(false); 
       };
 
-    const handleFileSelect = (file) => {
-      setCurrentFile(file);
-    };
 
-    const handleContentChange = (newContent) => {
-      setCurrentFile((prevFile) => ({
-        ...prevFile,
-        content: newContent,
-      }));
-    };
-    const saveFile = () => {
-      const updateFileContent = (files, fileName, newContent) => {
-        return files.map(item => {
-          if (item.type === 'file' && item.name === fileName) {
-            return { ...item, content: newContent };
-          }
-          if (item.children) {
-            return { ...item, children: updateFileContent(item.children, fileName, newContent) };
-          }
-          return item;
+    const saveFileContent = (file, content) => {
+      axios.post(`http://localhost/mod/gitlab/api/index.php/repository/blob?id=${file.id}`, { data })
+        .then(res => {
+          console.log('File content saved successfully:', res);
+        })
+        .catch(error => {
+          console.error('Error saving file content:', error);
         });
-      };
-  
-      const updatedFiles = updateFileContent(files, currentFile.name, currentFile.content);
-      setFiles(updatedFiles);
-      localStorage.setItem('files', JSON.stringify(updatedFiles));
-      refreshFilesFromLocalStorage();
-    };
-  
-    const refreshFilesFromLocalStorage = () => {
-      const savedFiles = localStorage.getItem('files');
-      if (savedFiles) {
-        setFiles(JSON.parse(savedFiles));
-      }
     };
   
     const onUpload = () => {
@@ -106,9 +106,12 @@ import axios from "axios";
     const handleBackClick = () => {
      window.location.href = 'http://localhost/mod/gitlab/view.php?id=33';
     };
+
+   
 //render ui
     return (
-      <Box width="100vw" height="100vh">
+      <ChakraProvider>
+        <Box width="100vw" height="100vh">
         <input
         id="fileInput"
         type="file"
@@ -116,18 +119,17 @@ import axios from "axios";
         onChange={handleFileChange}
       />
       <Box>
-      <ContextMenu></ContextMenu>
-      <Box bg="#eeeeee" h="30px">
+      <Box bgGradient='linear(to-r,  #f58f0a,#f5390a)' h="30px">
+      <ContextMenu position="absolute"></ContextMenu>
             <Flex justifyContent="flex-start" gap={5}>
                 <Button
                   ml="29px"
                   mt="5px"
-                  colorScheme="blue"
                   variant="solid"
-                  w="45px"
+                  // w="45px"
                   h="20px"
-                  color="black"
-                  backgroundColor="#d65bb7;" 
+                  // color="black"
+                  backgroundColor="white" 
                   borderRadius = "3px"
                   border="0px"
                   _hover={{
@@ -135,23 +137,24 @@ import axios from "axios";
                     textDecoration: "underline",
                   }}
                 >
-                  <Link onClick={handleBackClick} color="blue.400" cursor="pointer">
+                  <Link onClick={handleBackClick} color="#ec5d0b" cursor="pointer">
                     Back
                   </Link>
                 </Button>
                 {currentFile && (
-                  <Box><Button
+                  <Button
                   mt="5px"
+                  color=""
                   colorScheme="blue"
                   size="md"
                   variant="solid"
-                  w="45px"
+                  // w="45px"
                   h= "20px"
-                  color="black"
-                  backgroundColor="#d65bb7" 
+                  // color="black"
+                  backgroundColor="white" 
                   borderRadius = "3px"
                   border="0px"
-                  onClick={saveFile}
+                  // onClick={saveFile}
                   _hover={{
                     bg: "#818181",
                     textDecoration: "underline",
@@ -159,30 +162,33 @@ import axios from "axios";
                 >
                   Save
                 </Button>
-                </Box>
-                  
                   )}
-                  
+                  {/* <Button>
+
+                  </Button> */}
             </Flex>
           </Box>
       </Box>
       <Flex flexDirection="row" height="100%">
         <Box borderRight="1px solid #ddd">
           <Flex flexDirection="row" height="100%">
+            <Box bgGradient='linear(to-t,,#f5390a,  #f58f0a)'>
             <Navbar 
-              onSelectFile={handleFileSelect} 
+              // onSelectFile={handleFileSelect} 
               onCommit={() => {}} 
               toggleFileTree={toggleFileTree}
               toggleCommit={toggleCommit} 
               onUpload={onUpload}
             />
+            </Box>
+            
             <Box display="flex" flexDirection="row">
-              <Button onClick={getFileTree} />
+              {/* <Button onClick={getFileTree} /> */}
               {showCommit && <CommitUI />}
               {showFileTree && (
                 <FileTree 
                   data={listFile}
-                  onFileSelect={handleFileSelect} 
+                  // onFileSelect={handleFileSelect} 
                   // onAddFolder={handleAddFolder}
                   // onAddFile={handleAddFile}
                   // onRename={handleRename}
@@ -194,25 +200,28 @@ import axios from "axios";
           </Flex>
         </Box>
         <Box flex="1">
-          <Flex flexDirection="column" height="90%">
+          <Flex flexDirection="column" height="80%">
             <Box flex="1">
-              {currentFile && (
-                <Box>
-                <EditorCmponent 
-                  file={currentFile} 
-                  onContentChange={handleContentChange}
+              {/* {currentFile && ( */}
+                <Box bg="transparent">
+                <EditorComponent 
+                  // file={currentFile} 
+                  // onContentChange={handleContentChange}
+                  // content={fileContent}
                 />
                 </Box>
 
-              )}
-            </Box>
-            <Box bg="#dddddd">
+              {/* )} */}
+            </Box>   
+          </Flex>
+          <Box bg="#dd631c">
               <Comment />
             </Box>
-          </Flex>
         </Box>
       </Flex>
     </Box>
+      </ChakraProvider>
+      
     );
   };
   

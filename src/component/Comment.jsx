@@ -7,11 +7,11 @@ const Comment = () => {
   const { isOpen, onToggle } = useDisclosure()
   return (
     <>
-        <Button onClick={onToggle} bg="#eeeeee"  border="0px" >
+        <Button color="white" onClick={onToggle} bg="transparent"  border="0px" >
           <MdArrowDropDown />Comment
         </Button>
        <Collapse in={isOpen} animateOpacity>
-        <Stack  spacing="5px" height="70%">
+        <Stack  spacing="5px" height="18vh">
           <Textarea
             backgroundColor="#eeeeee"
             placeholder="Enter comment..."
@@ -64,3 +64,4 @@ const Comment = () => {
 }
 
 export default Comment;
+
