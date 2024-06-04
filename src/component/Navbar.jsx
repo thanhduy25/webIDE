@@ -1,64 +1,56 @@
-import { Box, VStack, IconButton, Tooltip,LinearGradient } from '@chakra-ui/react';
-import { FaFileUpload,FaFile ,FaGitAlt } from 'react-icons/fa';
-import React, { useState } from 'react';
+import { Box, VStack } from "@chakra-ui/react";
+import { FaFileUpload, FaFile, FaGitAlt } from "react-icons/fa";
+import React from "react";
+import { InputFile, NavbarItem } from "./NavbarComponents";
+import { useToast } from '@chakra-ui/react'
+import { useDispatch } from "react-redux";
+import { toggleFileTree, toggleCommit } from "../store/navbarSlide";
 
+const Navbar = () => {
+  const dispatch = useDispatch();
+  const toast = useToast()
 
-const Navbar = ({toggleCommit, onUpload, toggleFileTree }) => {
-  const [showChildren, setShowChildren] = useState(true);
-
-  const handleToggle = () => {
-    setShowChildren(!showChildren);
-    toggleFileTree();
-  };
-  
   const handleUpload = () => {
     document.getElementById("fileInput").click();
-    onUpload();
   };
 
+  const navbarItems = [
+    {
+      label: "Tree Directory",
+      icon: <FaFile style={{ fontSize: "25px" }} />,
+      onClick: () => dispatch(toggleFileTree()),
+    },
+    {
+      label: "Commit",
+      icon: <FaGitAlt style={{ fontSize: "25px" }} />,
+      onClick: () => dispatch(toggleCommit()),
+    },
+    {
+      label: "Upload",
+      icon: <FaFileUpload style={{ fontSize: "25px" }} />,
+      onClick: () => {
+        handleUpload()
+      }
+    },
+  ];
+
   return (
-    <Box color="black" width="30px" height="100vh" display="flex" flexDirection="column" alignItems="center" py={4}>
-      <VStack spacing={12}>
-        <Tooltip fontSize="15px" backgroundColor="black" color="white" label="Explorer" aria-label='A tooltip' placement="bottom">
-            <IconButton
-              icon={<FaFile style={{fontSize:'20px',color:"white" }} />}
-              variant="ghost"
-              colorScheme="whiteAlpha"
-              style={{ backgroundColor: 'transparent' }}
-              border='0px'
-              onClick={handleToggle}
-              _hover={{ color: "#1a5292", stroke: "blue" }}>
-            </IconButton>
-        </Tooltip>
-        <Tooltip fontSize="15px" backgroundColor="black" color="white" label="Commit" aria-label='A tooltip' placement="bottom">
-          <IconButton
-            icon={<FaGitAlt style={{fontSize:'20px',color:"white"   }} />}
-            onClick={toggleCommit}
-            variant="ghost"
-            colorScheme="whiteAlpha"
-            style={{ backgroundColor: 'transparent' }}
-            border='0px'
-            _hover={{ color: "#1a5292", stroke: "blue" }}
-          />
-        </Tooltip>
-        <Tooltip fontSize="15px" backgroundColor="black" color="white" label="Upload file" aria-label='A tooltip' placement="bottom">
-          <IconButton
-            icon={<FaFileUpload style={{fontSize:'20px',color:"white"   }} />}
-            onClick={handleUpload}
-            variant="ghost"
-            colorScheme="whiteAlpha"
-            style={{ backgroundColor: 'transparent' }}
-            border='0px'
-            _hover={{ color: "#1a5292", stroke: "blue" }}
-          />
-        </Tooltip>
+    <Box
+      color="black"
+      width="35px"
+      height="100vh"
+      display="flex"
+      flexDirection="column"
+      marginTop="0px"
+    >
+      <InputFile />
+      <VStack spacing={1}>
+        {navbarItems.map(({ label, icon, onClick }, index) => (
+          <NavbarItem key={index} label={label} icon={icon} onClick={onClick} />
+        ))}
       </VStack>
     </Box>
   );
 };
 
 export default Navbar;
-
-
-
-

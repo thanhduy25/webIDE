@@ -1,39 +1,64 @@
-import React, { useState } from 'react';
-import { Box, Flex, Text, Icon } from '@chakra-ui/react';
-import { MdFolder, MdInsertDriveFile } from 'react-icons/md';
+import React, { useState } from "react";
+import { Box, Flex, Text, Icon } from "@chakra-ui/react";
+import { MdFolder, MdInsertDriveFile } from "react-icons/md";
 
+import { useDispatch } from "react-redux";
+import { openContextMenu } from "../store/contextMenuSlice";
+import { changeFileTarget, changeFileEditing } from "../store/treeSlice";
 
-const TreeItem = ({ item, onFileSelect, onAddFolder,onAddFile}) => {
-  const [isOpenfile, setIsOpenfile] = useState(false);
+const TreeItem = ({ item, onFileSelect, onFileUpload }) => {
+  const dispatch = useDispatch();
 
-  const handleTogglefile = () => {
-    setIsOpenfile(!isOpenfile);
+  const isFolder = item.type === "tree";
+
+  const [isOpenFolder, setIsOpenFolder] = useState(false);
+
+  const handleToggleFolder = () => {
+    setIsOpenFolder(!isOpenFolder);
   };
-  
+
+  const handleContextMenu = (event) => {
+    console.log(item);
+    event.preventDefault();
+    event.stopPropagation();
+
+    dispatch(openContextMenu({ xPos: event.clientX, yPos: event.clientY }));
+    dispatch(changeFileTarget(item));
+
+    if (isFolder) handleToggleFolder();
+  };
+
+  const handleFileSelect = () => {
+    if (item.type === "blob") {
+      dispatch(changeFileEditing(item));
+    }
+  };
+
   return (
-    <Box>
-      <Flex 
-        width='100%' 
-        height='20px' 
-        alignItems="center" 
-        onClick={item.type === 'tree' ? handleTogglefile : () => onFileSelect(item)}
+    <Box onContextMenu={handleContextMenu}>
+      <Flex
+        width="100%"
+        height="20px"
+        alignItems="center"
+        onClick={isFolder ? handleToggleFolder : handleFileSelect}
         margin="5px"
         _hover={{
           bg: "#ececec",
           textDecoration: "underline",
+          cursor: "pointer",
         }}
-        >
-        {item.type === 'tree' ? (
+      >
+        {isFolder ? (
           <Icon color="#e7722d" as={MdFolder} />
-        ) : ( 
-          <Icon color ='#dddddd' as={MdInsertDriveFile} />
+        ) : (
+          <Icon color="#6ba5d8" as={MdInsertDriveFile} />
         )}
         <Text ml="3">{item.name}</Text>
       </Flex>
-      {isOpenfile && item.children && (
-        <Box pl="10px" mt='5px'>
+      {isOpenFolder && item.children && (
+        <Box pl="10px" mt="5px">
           {item.children.map((child, index) => (
-            <TreeItem key={index} item={child} onFileSelect={onFileSelect} />
+            <TreeItem key={index} item={child} onFileUpload={onFileUpload} onFileSelect={onFileSelect} />
           ))}
         </Box>
       )}
