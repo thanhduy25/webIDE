@@ -70,7 +70,12 @@ const HandleFileModal = () => {
                   dispatch
                 );
               } else {
-                const renameStatus = handleRename(name, fileTarget, dispatch);
+                const renameStatus = handleRename(
+                  name,
+                  fileTarget,
+                  treeDirectoryFlatten,
+                  dispatch
+                );
               }
             }}
           >

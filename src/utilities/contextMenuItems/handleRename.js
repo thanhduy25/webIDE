@@ -2,12 +2,19 @@ import {
   convertFlattenToNestedTreeDirectory,
   updateTreeDirectoryFlatten,
 } from "../../store/treeSlice";
+import { isItemExistedTreeDirectory } from "../common";
 import { ChangeActionIfItemExistInCreateAction } from "../common";
 
-const handleRename = (name, fileTarget, dispatch) => {
+const handleRename = (name, fileTarget, treeFlatten, dispatch) => {
   const fileTargetPath = fileTarget.path;
+
   ChangeActionIfItemExistInCreateAction(name, fileTargetPath);
   const parentPath = fileTargetPath.split("/").slice(0, -1).join("/");
+
+  const newPath = parentPath ? parentPath + "/" + name : name;
+  if (isItemExistedTreeDirectory(treeFlatten, newPath)) {
+    return false;
+  }
 
   dispatch(
     updateTreeDirectoryFlatten({
@@ -18,7 +25,7 @@ const handleRename = (name, fileTarget, dispatch) => {
         },
         new: {
           name: name,
-          path: parentPath ? parentPath + "/" + name : name,
+          path: newPath,
         },
       },
     })
