@@ -61,15 +61,17 @@ const HandleFileModal = () => {
             colorScheme="blue"
             onClick={() => {
               onCloseModal();
-              action === "add"
-                ? handleAdd(
-                    name,
-                    type,
-                    fileTarget,
-                    treeDirectoryFlatten,
-                    dispatch
-                  )
-                : handleRename(name, fileTarget, dispatch);
+              if (action === "add") {
+                const addStatus = handleAdd(
+                  name,
+                  type,
+                  fileTarget,
+                  treeDirectoryFlatten,
+                  dispatch
+                );
+              } else {
+                const renameStatus = handleRename(name, fileTarget, dispatch);
+              }
             }}
           >
             Create
