@@ -1,104 +1,100 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Flex, Button, IconButton } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { removeFileOpening, setFileEditing } from "../store/editorSlice";
+import { CloseIcon } from "@chakra-ui/icons";
 
-const EditorComponent = ({ file, value, onContentChange }) => {
-  const [fileContent, setFileContent] = useState("");
-  const [isDisplayImg, setIsDisplayImg] = useState(false);
+const EditorComponent = forwardRef((_, ref) => {
+  const dispatch = useDispatch();
+  const { listFileOpening, fileEditing } = useSelector((state) => state.editor);
 
+  function handleEditorDidMount(editor, _) {
+    ref.current = editor;
+  }
 
-  // background
-  monaco.editor.defineTheme("myTheme", {
-    base: "vs",
-    inherit: true,
-    rules: [],
-    colors: {
-      "editor.foreground": "#052B4D",
-      "editor.background": "#FFFFFF",
-      "editorCursor.foreground": "#8B0000",
-      "editor.lineHighlightBackground": "#BAD4EBC9",
-      "editorLineNumber.foreground": "#BE561A",
-      "editor.selectionBackground": "#88000030",
-      "editor.inactiveSelectionBackground": "#88000015",
-    },
-  });
-  monaco.editor.setTheme("myTheme");
-
-
-  useEffect(() => {
-    async function getFileContent() {
-      const response = await axios({
-        method: "get",
-        url: `http://localhost/mod/gitlab/api/index.php/repository/files?id=1&ref=main&file_path=${file?.path}`,
-        responseType: "json",
-      });
-
-      let content = response.data?.data?.content;
-
-      if (content) {
-        if (
-          file.name.endsWith(".png") ||
-          file.name.endsWith(".jpg") ||
-          file.name.endsWith(".jpeg") ||
-          file.name.endsWith(".svg")
-        ) {
-          content = `data:image/*;base64,${content}`;
-          setIsDisplayImg(true);
-          setFileContent(content);
-        } else {
-          setIsDisplayImg(false);
-          setFileContent(atob(content));
-        }
+  const componentShow = () => {
+    if (fileEditing) {
+      if (fileEditing.isImage) {
+        return (
+          <div
+            style={{
+              width: "80vw",
+              height: "80vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <img
+              src={fileEditing.content}
+              style={{ verticalAlign: "center" }}
+            ></img>
+          </div>
+        );
       }
-    }
-    getFileContent();
-  }, [file]);
 
-  // Nếu không có file được chọn, hiển thị một Editor rỗng
-  // if (!file) {
-  //   return (
-  //     <Box bg="transparent">
-  //       <Editor
-  //         theme="vs-dark"
-  //         height="75vh"
-  //         defaultLanguage="javascript"
-  //         value={"// Welcome to IDE"}
-  //         onChange={onContentChange}
-  //       />
-  //     </Box>
-  //   );
-  // }
+      return (
+        <Editor
+          height="80vh"
+          path={fileEditing.path}
+          defaultLanguage={fileEditing.language}
+          defaultValue={fileEditing.content}
+          onMount={handleEditorDidMount}
+          saveViewState={true}
+        />
+      );
+    }
+  };
+
+  const handleRemoveTab = (event, path) => {
+    event.stopPropagation();
+
+    const lenList = Object.keys(listFileOpening).length;
+    const lastItem = Object.keys(listFileOpening)[lenList - 2];
+
+    dispatch(setFileEditing(listFileOpening[lastItem]));
+    dispatch(removeFileOpening(path));
+  };
 
   // Nếu có file được chọn, hiển thị nội dung của file đó trong Editor
   return (
     <Box>
-      {isDisplayImg ? (
-        <div
-          style={{
-            width: "80vw",
-            height: "80vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <img src={fileContent} style={{ verticalAlign: "center" }}></img>
-        </div>
-      ) : (
-        <Editor
-          // theme="vs-dark"
-          height="80vh"
-          // defaultLanguage="javascript"
-          value={fileContent}
-          onChange={(value) => {
-            setFileContent(value);
-            // onContentChange(value);
-          }}
-        />
-      )}
+      <Flex>
+        {Object.keys(listFileOpening).length > 0 &&
+          Object.entries(listFileOpening).map(([path, fileOpening]) => {
+            return (
+              <Button
+                key={path}
+                bgColor={"transparent"}
+                onClick={() => {
+                  dispatch(setFileEditing(fileOpening));
+                }}
+                border={"1px"}
+                borderColor={"gray"}
+                borderRadius={"0"}
+                _hover={{ bgColor: "transparent" }}
+                paddingRight={"6px"}
+              >
+                {fileOpening.name}
+                <Box
+                  marginLeft={"16px"}
+                  paddingX={"8px"}
+                  paddingY={"4px"}
+                  borderRadius={"4px"}
+                  _hover={{ cursor: "pointer", bgColor: "gray.300" }}
+                  zIndex={2}
+                  onClick={(event) => handleRemoveTab(event, path)}
+                >
+                  <CloseIcon boxSize={"12px"} marginBottom={"3px"} />
+                </Box>
+              </Button>
+            );
+          })}
+      </Flex>
+      {componentShow()}
     </Box>
   );
-};
+});
 
 export default EditorComponent;

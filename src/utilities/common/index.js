@@ -1,6 +1,5 @@
 import axios from "axios";
-import { useToast } from '@chakra-ui/react'
-
+import { getParams } from "../index.js";
 
 const isItemAddedInTreeDirectory = (tree, path, type) =>
   tree.some((item) => {
@@ -12,11 +11,11 @@ const isItemAddedInTreeDirectory = (tree, path, type) =>
     }
   });
 
-// const isItemExistInCreateAction = (path) => {
-//   const actions = localStorage.actions ? JSON.parse(localStorage.actions) : [];
-//   if (actions.length === 0) return false;
-//   return actions.some((action) => action.path === path);
-// }
+const isItemExistInCreateAction = (path) => {
+  const actions = localStorage.actions ? JSON.parse(localStorage.actions) : [];
+  if (actions.length === 0) return false;
+  return actions.some((action) => action.path === path);
+};
 
 const ChangeActionIfItemExistInCreateAction = (newName, path) => {
   const actions = localStorage.actions ? JSON.parse(localStorage.actions) : [];
@@ -27,10 +26,10 @@ const ChangeActionIfItemExistInCreateAction = (newName, path) => {
   const newPath = parentPath ? parentPath + "/" + newName : newName;
 
   let isExist = false;
-  const newAction = actions.map(action => {
+  const newAction = actions.map((action) => {
     if (action.action === "create" && action.file_path === path) {
       action.file_path = newPath;
-      isExist = true
+      isExist = true;
     }
     return action;
   });
@@ -42,29 +41,31 @@ const ChangeActionIfItemExistInCreateAction = (newName, path) => {
       previous_path: path,
       content: "",
     });
-  };
+  }
   localStorage.actions = JSON.stringify(newAction);
-}
+};
 
 const handleCommit = async (message, author_name, author_email) => {
-  const toast = useToast()
   const actions = localStorage.actions ? JSON.parse(localStorage.actions) : [];
   if (actions.length === 0) return;
 
-
-  // const response = await axios.post(
-  //   "http://localhost/mod/gitlab/api/index.php/repository/commits",
-  //   {
-  //     id: 1,
-  //     branch: "main",
-  //     commit_message: "Test from WebIDE",
-  //     author_name: "John Doe",
-  //     author_email: "johndoe@example.com",
-  //     actions: actions,
-  //   }
-  // );
-
-  // console.log(isItemExistInCreateAction("F_2/F_2_1/adsad.txt"));
+  const params = getParams();
+  const response = await axios.post(
+    "http://localhost/mod/gitlab/api/index.php/repository/commits",
+    {
+      id: params.project_id,
+      branch: params.branch,
+      commit_message: message,
+      author_name: "John Doe",
+      author_email: "johndoe@example.com",
+      actions: actions,
+    }
+  );
+  console.log(response.data);
 };
 
-export { isItemAddedInTreeDirectory, ChangeActionIfItemExistInCreateAction, handleCommit };
+export {
+  isItemAddedInTreeDirectory,
+  ChangeActionIfItemExistInCreateAction,
+  handleCommit,
+};

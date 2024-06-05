@@ -7,24 +7,21 @@ const BackButton = ({ id }) => {
 
   return (
     <Button
-      ml="39px"
+      ml="29px"
       mt="5px"
       variant="solid"
       // w="45px"
       h="20px"
+      // color="black"
       backgroundColor="white"
       borderRadius="3px"
       border="0px"
       _hover={{
-        bg: "#a0471e",
-        color: "white"
+        bg: "#818181",
+        textDecoration: "underline",
       }}
     >
-
-      <Link _hover={{
-        bg: "#a0471e",
-        color: "white"
-      }} textDecorationLine="none" onClick={handleBackClick} color="#e25d20" cursor="pointer">
+      <Link onClick={handleBackClick} color="#ec5d0b" cursor="pointer">
         Back
       </Link>
     </Button>

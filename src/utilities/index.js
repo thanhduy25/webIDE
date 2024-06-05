@@ -1,7 +1,13 @@
 import getParams from "./getParams.js";
 import iterateAllFile from "./iterateAllTree.js";
+import extensionFileMapping from "./extensionFileMapping.js";
 
-import { handleAdd, handleDelete, handleRename } from "./contextMenuItems";
+import {
+  handleAdd,
+  handleDelete,
+  handleRename,
+  handleFileSelected,
+} from "./contextMenuItems";
 
 import {
   createCreateAction,
@@ -10,7 +16,11 @@ import {
   addAction,
 } from "./actionStorage";
 
-import { isItemAddedInTreeDirectory, ChangeActionIfItemExistInCreateAction, handleCommit } from "./common";
+import {
+  isItemAddedInTreeDirectory,
+  ChangeActionIfItemExistInCreateAction,
+  handleCommit,
+} from "./common";
 
 export {
   getParams,
@@ -18,6 +28,7 @@ export {
   handleAdd,
   handleDelete,
   handleRename,
+  handleFileSelected,
   createCreateAction,
   createUpdateAction,
   createDeleteAction,
@@ -25,4 +36,5 @@ export {
   isItemAddedInTreeDirectory,
   ChangeActionIfItemExistInCreateAction,
   handleCommit,
+  extensionFileMapping,
 };

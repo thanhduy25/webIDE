@@ -1,4 +1,4 @@
-import { updateTree } from "../../store/treeSlice";
+import { updateTree, updateTreeDirectoryFlatten } from "../../store/treeSlice";
 import { ChangeActionIfItemExistInCreateAction } from "../common";
 
 const handleRename = (name, fileTarget, tree, dispatch) => {
@@ -24,7 +24,21 @@ const handleRename = (name, fileTarget, tree, dispatch) => {
 
       return itemCloned;
     });
-  dispatch(updateTree(treeDirectoryRenameItem(treeClone)));
+  dispatch(updateTree(treeDirectonsoloryRenameItem(treeClone)));
+  dispatch(
+    updateTreeDirectoryFlatten({
+      action: "rename",
+      item: {
+        old: {
+          path: fileTargetPath,
+        },
+        new: {
+          name: name,
+          path: parentPath ? parentPath + "/" + name : name,
+        },
+      },
+    })
+  );
 };
 
 export default handleRename;

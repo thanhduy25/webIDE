@@ -2,13 +2,12 @@ import { Box, VStack } from "@chakra-ui/react";
 import { FaFileUpload, FaFile, FaGitAlt } from "react-icons/fa";
 import React from "react";
 import { InputFile, NavbarItem } from "./NavbarComponents";
-import { useToast } from '@chakra-ui/react'
+
 import { useDispatch } from "react-redux";
 import { toggleFileTree, toggleCommit } from "../store/navbarSlide";
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  const toast = useToast()
 
   const handleUpload = () => {
     document.getElementById("fileInput").click();
@@ -17,34 +16,33 @@ const Navbar = () => {
   const navbarItems = [
     {
       label: "Tree Directory",
-      icon: <FaFile style={{ fontSize: "25px" }} />,
+      icon: <FaFile style={{ fontSize: "25px", color: "white" }} />,
       onClick: () => dispatch(toggleFileTree()),
     },
     {
       label: "Commit",
-      icon: <FaGitAlt style={{ fontSize: "25px" }} />,
+      icon: <FaGitAlt style={{ fontSize: "25px", color: "white" }} />,
       onClick: () => dispatch(toggleCommit()),
     },
     {
       label: "Upload",
-      icon: <FaFileUpload style={{ fontSize: "25px" }} />,
-      onClick: () => {
-        handleUpload()
-      }
+      icon: <FaFileUpload style={{ fontSize: "25px", color: "white" }} />,
+      onClick: handleUpload,
     },
   ];
 
   return (
     <Box
       color="black"
-      width="35px"
+      width="30px"
       height="100vh"
       display="flex"
       flexDirection="column"
-      marginTop="0px"
+      alignItems="center"
+      py={4}
     >
       <InputFile />
-      <VStack spacing={1}>
+      <VStack spacing={2}>
         {navbarItems.map(({ label, icon, onClick }, index) => (
           <NavbarItem key={index} label={label} icon={icon} onClick={onClick} />
         ))}

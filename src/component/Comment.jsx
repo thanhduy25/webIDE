@@ -1,17 +1,24 @@
-import React from 'react';
-import { Collapse, Box, Button, Stack, Flex, Textarea } from '@chakra-ui/react';
+import React from "react";
+import { Collapse, Box, Button, Stack, Flex, Textarea } from "@chakra-ui/react";
 import { MdArrowDropDown } from "react-icons/md";
-import { useDisclosure } from '@chakra-ui/react';
+import { useDisclosure } from "@chakra-ui/react";
 
 const Comment = () => {
-  const { isOpen, onToggle } = useDisclosure()
+  const { isOpen, onToggle } = useDisclosure();
   return (
     <>
-      <Button _hover={{
-        bg: "#a0471e",
-        color: "white"
-      }} color="white" onClick={onToggle} bg="transparent" border="0px" >
-        <MdArrowDropDown />Comment
+      <Button
+        _hover={{
+          bg: "#a0471e",
+          color: "white",
+        }}
+        color="white"
+        onClick={onToggle}
+        bg="transparent"
+        border="0px"
+      >
+        <MdArrowDropDown />
+        Comment
       </Button>
       <Collapse in={isOpen} animateOpacity>
         <Flex spacing="5px" height="16vh">
@@ -70,7 +77,6 @@ const Comment = () => {
       </Collapse>
     </>
   );
-}
+};
 
 export default Comment;
-

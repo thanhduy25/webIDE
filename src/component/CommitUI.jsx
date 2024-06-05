@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Box, Input, Button, Flex } from "@chakra-ui/react";
-import { useToast } from '@chakra-ui/react'
+import { useToast } from "@chakra-ui/react";
 
 import { handleCommit } from "../utilities";
 
@@ -10,7 +10,7 @@ const CommitUI = ({ onCommit }) => {
   const [initialWidth, setInitialWidth] = useState(null);
   const [commitWidth, setCommitWidth] = useState("250px");
   const commitHeight = "100vh";
-  const toast = useToast()
+  const toast = useToast();
 
   const containerRef = useRef(null);
 
@@ -83,15 +83,14 @@ const CommitUI = ({ onCommit }) => {
               onClick={() => {
                 handleCommit();
                 toast({
-                  position: 'top',
-                  title: 'Commited !',
+                  position: "top",
+                  title: "Commited !",
                   description: "All changes were saved on Gitlab. ",
-                  status: 'success',
+                  status: "success",
                   duration: 3000,
                   isClosable: true,
                 });
-              }
-              }
+              }}
             >
               Commit
             </Button>

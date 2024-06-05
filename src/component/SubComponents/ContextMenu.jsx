@@ -61,7 +61,7 @@ const ContextMenu = () => {
             boxShadow: "0 3px 5px rgba(0, 0, 0, 0.7)",
             borderRadius: "0px",
             zIndex: 1000,
-            width: "150px"
+            width: "150px",
           }}
         >
           <List
@@ -69,7 +69,6 @@ const ContextMenu = () => {
             background={"white"}
             border={"0px"}
             borderColor={"black"}
-
           >
             {contextMenuItemList.map(({ name, onClick }, index) => (
               <ContextMenuItem

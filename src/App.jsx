@@ -4,57 +4,90 @@ import {
   Navbar,
   Comment,
   CommitUI,
-  data,
   BackButton,
   SaveButton,
   HandleFileModal,
   ContextMenu,
   AlertComponent,
 } from "./component";
-import { getParams } from "./utilities";
 
 import { Flex, Box, ChakraProvider } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import axios from "axios";
 
 import { useSelector, useDispatch } from "react-redux";
 import { closeContextMenu } from "./store/contextMenuSlice";
 import { closeAlertDialog } from "./store/alertDialogSlice";
-import { updateTree } from "./store/treeSlice";
-import { handleDelete } from "./utilities";
+import { updateTree, convertTreeDirectoryFlatten } from "./store/treeSlice";
+
+import { getParams, handleDelete } from "./utilities";
+import { setGlobalData } from "./store/globalDataSlice";
 
 function App() {
   const dispatch = useDispatch();
-  const { treeDirectory, fileEditing, fileTarget } = useSelector(
-    (state) => state.tree
-  );
+  const editorRef = useRef(null);
+
+  const { treeDirectory, fileTarget } = useSelector((state) => state.tree);
   const { isOpen: isOpenModal } = useSelector((state) => state.modal);
   const { isOpen: isOpenAlertDialog } = useSelector(
     (state) => state.alertDialog
   );
+  const { fileEditing } = useSelector((state) => state.editor);
 
   const { contentShow } = useSelector((state) => state.navbar);
 
+  //Get data passed from the parent window (view_ide.php)
+  useEffect(() => {
+    window.onmessage = function ({ data }) {
+      const params = getParams();
+
+      if ("author_name" in data && "author_email" in data) {
+        dispatch(
+          setGlobalData({
+            courseId: params.id,
+            projectId: params.project_id,
+            branch: params.branch,
+            authorName: data.author_name,
+            authorEmail: data.author_email,
+          })
+        );
+      }
+    };
+  }, []);
+
   //Get file tree
   useEffect(() => {
-    const getFileTree = async (data) => {
-      const baseUrl =
-        "http://localhost/mod/gitlab/api/index.php/repository/tree?id=1&recursive=false";
-      const queryParams = new URLSearchParams(data).toString();
+    const getFileTree = async (params) => {
+      const baseUrl = `http://localhost/mod/gitlab/api/index.php/repository/tree?`;
+
+      const queryParams = new URLSearchParams({
+        project_id: params.project_id,
+        ref: params.branch,
+        recursive: true,
+      }).toString();
+
       try {
         const response = await axios.get(baseUrl + "?" + queryParams);
         dispatch(updateTree(response.data.data));
+        dispatch(convertTreeDirectoryFlatten());
       } catch (error) {
         console.error("Error fetching list of files:", error);
       }
     };
     const params = getParams();
+
+    dispatch(
+      setGlobalData({
+        projectId: params.project_id,
+        branch: params.branch,
+      })
+    );
+
     getFileTree(params);
   }, []);
 
   //render ui
   return (
-
     <ChakraProvider>
       <Box
         width="100vw"
@@ -74,6 +107,7 @@ function App() {
                 }}
               />
             )}
+
             <Flex justifyContent="flex-start" gap={5}>
               <BackButton onClick={() => handleBackClick(1)} />
               {fileEditing && <SaveButton />}
@@ -83,9 +117,10 @@ function App() {
         <Flex flexDirection="row" height="100%">
           <Box borderRight="1px solid #ddd">
             <Flex flexDirection="row" height="100%">
-              <Box p="2px 2px" bgGradient="linear(to-t,,#f5390a,  #f58f0a)">
+              <Box bgGradient="linear(to-t,,#f5390a,  #f58f0a)">
                 <Navbar onCommit={() => { }} />
               </Box>
+
               {contentShow && (
                 <>
                   {contentShow === "commit" && <CommitUI />}
@@ -101,7 +136,7 @@ function App() {
               <Box flex="1">
                 <Box bg="transparent">
                   <EditorComponent
-                    file={fileEditing.item}
+                    ref={editorRef}
                   // onContentChange={handleContentChange}
                   // content={fileContent}
                   />

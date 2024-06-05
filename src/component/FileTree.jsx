@@ -1,10 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import TreeItem from "./TreeItem";
+import { useDispatch } from "react-redux";
+import { openContextMenu } from "../store/contextMenuSlice";
+import { changeFileTarget } from "../store/treeSlice";
 
 const FileTree = ({ data }) => {
+  const dispatch = useDispatch();
   const [isResizing, setIsResizing] = useState(false);
   const [initialWidth, setInitialWidth] = useState(null);
-  const [treeWidth, setTreeWidth] = useState("250px");
+  const [treeWidth, setTreeWidth] = useState("170px");
   const [treeHeight] = useState("100vh");
 
   const containerRef = useRef(null);
@@ -38,7 +42,12 @@ const FileTree = ({ data }) => {
   return (
     <div
       ref={containerRef}
-      style={{ backgroundColor: "white", position: "relative", height: treeHeight }}
+      style={{ position: "relative", height: treeHeight}}
+      onContextMenu={(event) => {
+        event.preventDefault();
+        dispatch(openContextMenu({ xPos: event.clientX, yPos: event.clientY }));
+        dispatch(changeFileTarget("root"));
+      }}
     >
       <div
         style={{
@@ -47,13 +56,14 @@ const FileTree = ({ data }) => {
           transition: "width 0.001s",
           borderRight: "1px solid #ddd",
           overflowY: "auto",
+          overflowX: "hidden"
         }}
         onDoubleClick={(event) => event.preventDefault()}
       >
         <div
           style={{
             position: "absolute",
-            width: "2px",
+            width: "10px",
             height: "100%",
             right: "0",
             top: "0",

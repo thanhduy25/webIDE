@@ -1,9 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { useToast } from '@chakra-ui/react'
 
 const TREE = "tree";
 const COMMIT = "commit";
-// const toast = useToast()
 
 const initialNavbarState = {
   contentShow: TREE,
@@ -14,7 +12,6 @@ export const navbarSlice = createSlice({
   initialState: initialNavbarState,
   reducers: {
     toggleFileTree: (state) => {
-
       if (state.contentShow === TREE) {
         state.contentShow = null;
       } else {

@@ -1,4 +1,4 @@
-import { updateTree } from "../../store/treeSlice";
+import { updateTree, updateTreeDirectoryFlatten } from "../../store/treeSlice";
 
 const handleDelete = (fileTarget, tree, dispatch) => {
   const fileTargetPath = fileTarget.path;
@@ -31,6 +31,12 @@ const handleDelete = (fileTarget, tree, dispatch) => {
   };
 
   dispatch(updateTree(treeDirectoryDeleteItem(tree)));
+  dispatch(
+    updateTreeDirectoryFlatten({
+      action: "delete",
+      item: fileTargetPath,
+    })
+  );
 };
 
 export default handleDelete;

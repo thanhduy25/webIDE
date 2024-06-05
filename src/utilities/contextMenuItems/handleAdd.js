@@ -1,10 +1,16 @@
-import { updateTree } from "../../store/treeSlice";
+import { updateTree, updateTreeDirectoryFlatten } from "../../store/treeSlice";
 import { createCreateAction, addAction } from "../actionStorage";
 import { isItemAddedInTreeDirectory } from "../common";
 
 const handleAdd = (name, type, fileTarget, tree, dispatch) => {
-  const fileTargetPath = fileTarget.path;
-  const newPath = fileTargetPath + "/" + name;
+  let fileTargetPath = "";
+  if (fileTarget != "root") {
+    fileTargetPath = fileTarget.path;
+  }
+  let newPath = fileTargetPath + "/" + name;
+  if (newPath[0] === "/") {
+    newPath = newPath.slice(1);
+  }
 
   if (isItemAddedInTreeDirectory(tree, newPath, type)) {
     return;
@@ -23,8 +29,11 @@ const handleAdd = (name, type, fileTarget, tree, dispatch) => {
 
   var treeClone = tree.slice(0);
 
-  const treeDirectoryAddedItem = (tree) =>
-    tree.map((item) => {
+  const treeDirectoryAddedItem = (tree) => {
+    if (fileTargetPath === "") {
+      return [...tree, newItem];
+    }
+    return tree.map((item) => {
       const itemCloned = { ...item };
 
       if (itemCloned.type === "tree") {
@@ -40,13 +49,25 @@ const handleAdd = (name, type, fileTarget, tree, dispatch) => {
 
       return itemCloned;
     });
+  };
 
   if (type === "blob") {
-    const action = createCreateAction(newItem.path, "");
+    const action = createCreateAction(
+      newItem.path === undefined ? "" : newItem.path,
+      ""
+    );
     addAction(action);
   }
 
   dispatch(updateTree(treeDirectoryAddedItem(treeClone)));
+  dispatch(
+    updateTreeDirectoryFlatten({
+      action: "add",
+      item: {
+        [newItem.path]: newItem,
+      },
+    })
+  );
 };
 
 export default handleAdd;

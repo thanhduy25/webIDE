@@ -18,7 +18,9 @@ import { handleAdd, handleRename } from "../../utilities";
 
 const HandleFileModal = () => {
   const { treeDirectory, fileTarget } = useSelector((state) => state.tree);
+
   const { type, action } = useSelector((state) => state.modal);
+
   const [name, setName] = useState("");
 
   const inputRef = useCallback((node) => {

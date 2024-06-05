@@ -1,5 +1,5 @@
 const getParams = () => {
-  const queryString = window.location.search.substring(1);
+  const queryString = window.parent.location.search.substring(1);
   const queryList = queryString.split("&");
 
   const params = {};
