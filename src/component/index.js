@@ -16,6 +16,8 @@ import {
   AlertComponent,
 } from "./SubComponents";
 
+import TabsEditing from "./Editor/TabsEditing";
+
 export {
   EditorComponent,
   FileTree,
@@ -28,4 +30,5 @@ export {
   HandleFileModal,
   ContextMenu,
   AlertComponent,
+  TabsEditing,
 };

@@ -1,15 +1,8 @@
 import axios from "axios";
 import { getParams } from "../index.js";
 
-const isItemAddedInTreeDirectory = (tree, path, type) =>
-  tree.some((item) => {
-    if (item.path === path && item.type === type) {
-      return true;
-    }
-    if (item.children && item.children.length > 0) {
-      return isItemAddedInTreeDirectory(item.children, path, type);
-    }
-  });
+const isItemExistedTreeDirectory = (treeFlatten, path) =>
+  Object.hasOwn(treeFlatten, path);
 
 const isItemExistInCreateAction = (path) => {
   const actions = localStorage.actions ? JSON.parse(localStorage.actions) : [];
@@ -65,7 +58,7 @@ const handleCommit = async (message, author_name, author_email) => {
 };
 
 export {
-  isItemAddedInTreeDirectory,
+  isItemExistedTreeDirectory,
   ChangeActionIfItemExistInCreateAction,
   handleCommit,
 };

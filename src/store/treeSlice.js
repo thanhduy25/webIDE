@@ -16,9 +16,6 @@ export const treeSlice = createSlice({
     updateTree: (state, action) => {
       state.treeDirectory = action.payload;
     },
-    updateFileContent: (state, action) => {
-      state.fileEditing.fileContent = action.payload;
-    },
     convertTreeDirectoryFlatten: (state) => {
       const treeDirectoryFlatten = {};
 
@@ -81,8 +78,8 @@ export const treeSlice = createSlice({
       }
     },
     convertFlattenToNestedTreeDirectory: (state) => {
-      const treeFlattenClone = { ...state.treeDirectoryFlatten };
-      let treeFlattenPaths = Object.keys(treeFlatten);
+      const treeFlattenClone = { ...current(state.treeDirectoryFlatten) };
+      let treeFlattenPaths = Object.keys(treeFlattenClone);
 
       let highestLevel = 0;
 
@@ -91,23 +88,24 @@ export const treeSlice = createSlice({
         if (level > highestLevel) highestLevel = level;
       });
 
-      while (highestLevel > 0) {
+      while (highestLevel > 1) {
         treeFlattenPaths = treeFlattenPaths.filter((path) => {
           const pathArr = path.split("/");
           const level = pathArr.length;
 
           if (level === highestLevel) {
-            const parentFolder = pathArr.join("/");
-
+            const parentFolder = pathArr.slice(0, -1).join("/");
             if (!parentFolder) return true;
 
-            if (!Object.hasOwn(treeFlattenClone[parentFolder], "children")) {
-              treeFlattenClone[parentFolder].children = [];
-            }
+            const parentClone = { ...treeFlattenClone[parentFolder] };
 
-            treeFlattenClone[parentFolder].children.push(
-              treeFlattenClone[path]
-            );
+            if (!parentClone.children) parentClone.children = [];
+            parentClone.children = [
+              ...parentClone.children,
+              treeFlattenClone[path],
+            ];
+
+            treeFlattenClone[parentFolder] = parentClone;
 
             delete treeFlattenClone[path];
 
@@ -126,11 +124,9 @@ export const treeSlice = createSlice({
 export const {
   changeFileTarget,
   updateTree,
-  updateFileContent,
-  changeFileEditing,
-  changeContentFileEditing,
   convertTreeDirectoryFlatten,
   updateTreeDirectoryFlatten,
+  convertFlattenToNestedTreeDirectory,
 } = treeSlice.actions;
 
 export default treeSlice.reducer;

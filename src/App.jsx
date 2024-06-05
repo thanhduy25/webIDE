@@ -9,6 +9,7 @@ import {
   HandleFileModal,
   ContextMenu,
   AlertComponent,
+  TabsEditing,
 } from "./component";
 
 import { Flex, Box, ChakraProvider } from "@chakra-ui/react";
@@ -96,7 +97,7 @@ function App() {
         onClick={() => dispatch(closeContextMenu())}
       >
         <Box>
-          <Box bgGradient="linear(to-r,  #f58f0a,#f5390a)" h="30px">
+          <Box bgGradient="linear(to-r,  #f58f0a,#f5390a)" h="40px">
             <ContextMenu />
             {isOpenModal && <HandleFileModal />}
             {isOpenAlertDialog && (
@@ -104,7 +105,7 @@ function App() {
                 onCancelClick={() => dispatch(closeAlertDialog())}
                 onDeleteClick={() => {
                   dispatch(closeAlertDialog());
-                  handleDelete(fileTarget, treeDirectory, dispatch);
+                  handleDelete(fileTarget, dispatch);
                 }}
               />
             )}
@@ -112,6 +113,7 @@ function App() {
             <Flex justifyContent="flex-start" gap={5}>
               <BackButton onClick={() => handleBackClick(1)} />
               {fileEditing && <SaveButton />}
+              <TabsEditing />
             </Flex>
           </Box>
         </Box>
@@ -119,7 +121,7 @@ function App() {
           <Box borderRight="1px solid #ddd">
             <Flex flexDirection="row" height="100%">
               <Box bgGradient="linear(to-t,,#f5390a,  #f58f0a)">
-                <Navbar onCommit={() => {}} />
+                <Navbar />
               </Box>
 
               {contentShow && (
@@ -136,14 +138,8 @@ function App() {
             <Flex flexDirection="column" height="80%">
               <Box flex="1">
                 <Box bg="transparent">
-                  <EditorComponent
-                    ref={editorRef}
-                    // onContentChange={handleContentChange}
-                    // content={fileContent}
-                  />
+                  <EditorComponent ref={editorRef} />
                 </Box>
-
-                {/* )} */}
               </Box>
             </Flex>
             <Box bg="#dd631c">

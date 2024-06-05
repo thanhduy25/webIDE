@@ -17,7 +17,7 @@ import {
 } from "./actionStorage";
 
 import {
-  isItemAddedInTreeDirectory,
+  isItemExistedTreeDirectory,
   ChangeActionIfItemExistInCreateAction,
   handleCommit,
 } from "./common";
@@ -33,7 +33,7 @@ export {
   createUpdateAction,
   createDeleteAction,
   addAction,
-  isItemAddedInTreeDirectory,
+  isItemExistedTreeDirectory,
   ChangeActionIfItemExistInCreateAction,
   handleCommit,
   extensionFileMapping,

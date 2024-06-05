@@ -17,7 +17,9 @@ import { closeModal } from "../../store/modalSlice";
 import { handleAdd, handleRename } from "../../utilities";
 
 const HandleFileModal = () => {
-  const { treeDirectory, fileTarget } = useSelector((state) => state.tree);
+  const { treeDirectoryFlatten, fileTarget } = useSelector(
+    (state) => state.tree
+  );
 
   const { type, action } = useSelector((state) => state.modal);
 
@@ -60,8 +62,14 @@ const HandleFileModal = () => {
             onClick={() => {
               onCloseModal();
               action === "add"
-                ? handleAdd(name, type, fileTarget, treeDirectory, dispatch)
-                : handleRename(name, fileTarget, treeDirectory, dispatch);
+                ? handleAdd(
+                    name,
+                    type,
+                    fileTarget,
+                    treeDirectoryFlatten,
+                    dispatch
+                  )
+                : handleRename(name, fileTarget, dispatch);
             }}
           >
             Create
