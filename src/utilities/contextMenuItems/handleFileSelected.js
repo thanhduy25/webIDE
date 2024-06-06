@@ -12,7 +12,15 @@ const checkIsImage = (item) => {
   );
 };
 
-const handleFileSelected = async (projectId, branch, item, dispatch) => {
+const handleFileSelected = async (
+  projectId,
+  branch,
+  treeFlatten,
+  item,
+  dispatch
+) => {
+  let itemSelected = null;
+
   const baseUrl = `http://localhost/mod/gitlab/api/index.php/repository/files`;
   const params = new URLSearchParams({
     project_id: projectId,
@@ -21,12 +29,13 @@ const handleFileSelected = async (projectId, branch, item, dispatch) => {
   }).toString();
 
   let isImage = false;
-
   if (item.type === "blob") {
     isImage = checkIsImage(item);
     let content = "";
-    if (item.content) {
-      content = item.content;
+
+    if (treeFlatten[item.path].content) {
+      content = treeFlatten[item.path].content;
+      itemSelected = { ...treeFlatten[item.path], content };
     } else {
       const response = await axios.get(baseUrl + "?" + params);
 
@@ -41,20 +50,16 @@ const handleFileSelected = async (projectId, branch, item, dispatch) => {
       } else {
         content = "";
       }
+      itemSelected = { ...item, content, originalContent: content };
     }
+    console.log(itemSelected);
+    dispatch(
+      updateTreeDirectoryFlatten({
+        action: "update",
+        item: itemSelected,
+      })
+    );
 
-    if (item) {
-      let itemSelected = { ...item, content };
-      if (!item.originalContent) {
-        itemSelected = { ...item, content, originalContent: content };
-      }
-      dispatch(
-        updateTreeDirectoryFlatten({
-          action: "update",
-          item: itemSelected,
-        })
-      );
-    }
     dispatch(
       addFileOpening({
         [item.path]: {
@@ -73,6 +78,7 @@ const handleFileSelected = async (projectId, branch, item, dispatch) => {
         path: item.path,
         content,
         isImage,
+        hasChanged: false,
       })
     );
   }

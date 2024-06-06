@@ -1,7 +1,7 @@
 import { Button } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 
-const SaveButton = () => {
+const SaveButton = ({ onClick }) => {
   const toast = useToast();
   return (
     <Button
@@ -14,15 +14,16 @@ const SaveButton = () => {
       backgroundColor="white"
       borderRadius="3px"
       border="0px"
-      onClick={() =>
+      onClick={() => {
+        onClick();
         toast({
           title: "Saved.",
           description: "File was saved!",
           status: "success",
           duration: 9000,
           isClosable: true,
-        })
-      }
+        });
+      }}
       _hover={{
         bg: "#a0471e",
         color: "white",

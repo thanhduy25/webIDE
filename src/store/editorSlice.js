@@ -24,6 +24,19 @@ export const editorSlice = createSlice({
     },
     setFileEditing: (state, action) => {
       state.fileEditing = action.payload;
+
+      let newListFileOpening = null;
+
+      if (action.payload == null) {
+        newListFileOpening = {};
+      } else {
+        newListFileOpening = {
+          ...state.listFileOpening,
+          [state.fileEditing.path]: state.fileEditing,
+        };
+      }
+
+      state.listFileOpening = newListFileOpening;
     },
   },
 });

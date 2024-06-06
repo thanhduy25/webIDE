@@ -9,7 +9,6 @@ import {
   HandleFileModal,
   ContextMenu,
   AlertComponent,
-  TabsEditing,
 } from "./component";
 
 import { Flex, Box, ChakraProvider } from "@chakra-ui/react";
@@ -19,10 +18,17 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { closeContextMenu } from "./store/contextMenuSlice";
 import { closeAlertDialog } from "./store/alertDialogSlice";
-import { updateTree, convertTreeDirectoryFlatten } from "./store/treeSlice";
+import {
+  updateTree,
+  convertTreeDirectoryFlatten,
+  handleSave,
+} from "./store/treeSlice";
 
 import { getParams, handleDelete } from "./utilities";
 import { setGlobalData } from "./store/globalDataSlice";
+import { useHotkeys } from "react-hotkeys-hook";
+
+import { setFileEditing } from "./store/editorSlice";
 
 function App() {
   const dispatch = useDispatch();
@@ -92,6 +98,18 @@ function App() {
     getFileTree(params);
   }, []);
 
+  useHotkeys("ctrl+s", (event) => {
+    event.preventDefault();
+    // console.log(treeDirectoryFlatten[fileEditing.path].content);
+    dispatch(
+      handleSave({
+        path: fileEditing.path,
+        newContent: editorRef.current.getValue(),
+      })
+    );
+    dispatch(setFileEditing({ ...fileEditing, hasChanged: false }));
+  });
+
   //render ui
   return (
     <ChakraProvider>
@@ -116,8 +134,21 @@ function App() {
 
             <Flex justifyContent="flex-start" gap={5}>
               <BackButton onClick={() => handleBackClick(1)} />
-              {fileEditing && <SaveButton />}
-              <TabsEditing />
+              {fileEditing && (
+                <SaveButton
+                  onClick={() => {
+                    dispatch(
+                      handleSave({
+                        path: fileEditing.path,
+                        newContent: editorRef.current.getValue(),
+                      })
+                    );
+                    dispatch(
+                      setFileEditing({ ...fileEditing, hasChanged: false })
+                    );
+                  }}
+                />
+              )}
             </Flex>
           </Box>
         </Box>

@@ -1,18 +1,34 @@
 import { Box, Image } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
 import React, { forwardRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import TabsEditing from "./Editor/TabsEditing";
+import { setFileEditing } from "../store/editorSlice";
 
 const EditorComponent = forwardRef((_, ref) => {
+  const dispatch = useDispatch();
+
   const { fileEditing } = useSelector((state) => state.editor);
+  const { treeDirectoryFlatten } = useSelector((state) => state.tree);
 
   function handleEditorDidMount(editor, _) {
     ref.current = editor;
   }
 
+  const handleEditorChange = (value) => {
+    if (value !== treeDirectoryFlatten[fileEditing.path].content) {
+      dispatch(
+        setFileEditing({ ...fileEditing, content: value, hasChanged: true })
+      );
+    } else {
+      dispatch(
+        setFileEditing({ ...fileEditing, content: value, hasChanged: false })
+      );
+    }
+  };
+
   const componentShow = () => {
     if (fileEditing) {
-      console.log(fileEditing);
       if (fileEditing.isImage) {
         return (
           <div
@@ -44,6 +60,9 @@ const EditorComponent = forwardRef((_, ref) => {
           }
           defaultValue={fileEditing.content}
           onMount={handleEditorDidMount}
+          onChange={(value) => {
+            handleEditorChange(value);
+          }}
           saveViewState={true}
         />
       );
@@ -51,7 +70,12 @@ const EditorComponent = forwardRef((_, ref) => {
   };
 
   // Nếu có file được chọn, hiển thị nội dung của file đó trong Editor
-  return <Box>{componentShow()}</Box>;
+  return (
+    <Box>
+      <TabsEditing />
+      {componentShow()}
+    </Box>
+  );
 });
 
 export default EditorComponent;

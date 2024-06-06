@@ -122,6 +122,14 @@ export const treeSlice = createSlice({
       }
       state.treeDirectory = Object.values(treeFlattenClone);
     },
+    handleSave: (state, action) => {
+      let item = current(state.treeDirectoryFlatten[action.payload.path]);
+
+      item = { ...item, content: action.payload.newContent };
+
+      action.payload = { ...action.payload, action: "update", item };
+      treeSlice.caseReducers.updateTreeDirectoryFlatten(state, action);
+    },
   },
 });
 
@@ -131,6 +139,7 @@ export const {
   convertTreeDirectoryFlatten,
   updateTreeDirectoryFlatten,
   convertFlattenToNestedTreeDirectory,
+  handleSave,
 } = treeSlice.actions;
 
 export default treeSlice.reducer;

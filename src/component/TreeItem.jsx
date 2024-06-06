@@ -11,6 +11,7 @@ const TreeItem = ({ item }) => {
   const dispatch = useDispatch();
 
   const { projectId, branch } = useSelector((state) => state.globalData);
+  const { treeDirectoryFlatten } = useSelector((state) => state.tree);
 
   const isFolder = item.type === "tree";
 
@@ -39,7 +40,14 @@ const TreeItem = ({ item }) => {
         onClick={
           isFolder
             ? handleToggleFolder
-            : () => handleFileSelected(projectId, branch, item, dispatch)
+            : () =>
+                handleFileSelected(
+                  projectId,
+                  branch,
+                  treeDirectoryFlatten,
+                  item,
+                  dispatch
+                )
         }
         margin="5px"
         _hover={{

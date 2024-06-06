@@ -5,7 +5,7 @@ import { CloseIcon } from "@chakra-ui/icons";
 
 const TabsEditing = () => {
   const dispatch = useDispatch();
-  const { listFileOpening } = useSelector((state) => state.editor);
+  const { listFileOpening, fileEditing } = useSelector((state) => state.editor);
 
   const handleRemoveTab = (event, path) => {
     event.stopPropagation();
@@ -17,6 +17,8 @@ const TabsEditing = () => {
     dispatch(removeFileOpening(path));
   };
 
+  const isCurrentTabPath = (path) => path === fileEditing.path;
+
   return (
     <Flex>
       {Object.keys(listFileOpening).length > 0 &&
@@ -24,19 +26,29 @@ const TabsEditing = () => {
           return (
             <Button
               key={path}
-              bgColor={"white"}
+              bgColor={isCurrentTabPath(path) ? "gray.200" : "white"}
               onClick={() => {
                 dispatch(setFileEditing(fileOpening));
               }}
               border={"1px"}
               borderColor={"gray"}
               borderRadius={"0"}
-              _hover={{ bgColor: "white" }}
+              _hover={{
+                bgColor: isCurrentTabPath(path) ? "gray.200" : "white",
+              }}
               paddingRight={"6px"}
             >
               {fileOpening.name}
+              {fileOpening.hasChanged && (
+                <Box
+                  marginLeft={"8px"}
+                  boxSize={"10px"}
+                  bgColor={"black"}
+                  borderRadius={"full"}
+                />
+              )}
               <Box
-                marginLeft={"16px"}
+                marginLeft={"4px"}
                 paddingX={"8px"}
                 paddingY={"4px"}
                 borderRadius={"4px"}
