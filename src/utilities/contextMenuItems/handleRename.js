@@ -19,7 +19,7 @@ const handleRename = (name, fileTarget, treeFlatten, dispatch) => {
   const newPath = parentPath ? parentPath + "/" + name : name;
 
   if (isItemExistedTreeDirectory(treeFlatten, newPath)) {
-    return false;
+    return true;
   }
 
   dispatch(
@@ -88,7 +88,7 @@ const handleRename = (name, fileTarget, treeFlatten, dispatch) => {
 
   localStorage.actions = JSON.stringify(newListActions);
 
-  return true;
+  return false;
 };
 
 export default handleRename;

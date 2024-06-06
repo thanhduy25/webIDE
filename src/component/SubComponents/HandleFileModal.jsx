@@ -7,11 +7,11 @@ import {
   ModalBody,
   Input,
   Button,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
 
-import { useHotkeys } from "react-hotkeys-hook";
-
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import { closeModal } from "../../store/modalSlice";
@@ -25,7 +25,8 @@ const HandleFileModal = () => {
 
   const { type, action } = useSelector((state) => state.modal);
 
-  const [name, setName] = useState(action === "rename" ? fileTarget.name : "");
+  const [name, setName] = useState(action == "rename" ? fileTarget.name : "");
+  const [existName, setExistName] = useState(false);
 
   const inputRef = useCallback((node) => {
     if (node !== null) {
@@ -37,34 +38,7 @@ const HandleFileModal = () => {
   }, []);
 
   const dispatch = useDispatch();
-
   const onCloseModal = () => dispatch(closeModal());
-
-  const onConfirmAction = () => {
-    onCloseModal();
-    if (action === "add") {
-      const addStatus = handleAdd(
-        name,
-        type,
-        fileTarget,
-        treeDirectoryFlatten,
-        dispatch
-      );
-    } else {
-      const renameStatus = handleRename(
-        name,
-        fileTarget,
-        treeDirectoryFlatten,
-        dispatch
-      );
-    }
-  };
-
-  const handleEnterKeyDown = (event) => {
-    if (event.key === "Enter") {
-      onConfirmAction();
-    }
-  };
 
   return (
     <Modal isOpen={true} onClick={onCloseModal}>
@@ -75,20 +49,51 @@ const HandleFileModal = () => {
         </ModalHeader>
         <ModalBody>
           <Input
+            isInvalid={existName}
             ref={inputRef}
             type="text"
             placeholder={`Enter ${type === "tree" ? "folder" : "file"} name`}
             onChange={(event) => setName(event.target.value)}
             defaultValue={action === "rename" ? fileTarget.name : ""}
-            onKeyDown={handleEnterKeyDown}
+            errorBorderColor="red.300"
           />
+          {existName && (
+            <Alert status="error">
+              <AlertIcon />
+              This name already exists !
+            </Alert>
+          )}
         </ModalBody>
         <ModalFooter>
           <Button variant="ghost" mr={3} onClick={onCloseModal}>
             Close
           </Button>
-          <Button colorScheme="blue" onClick={onConfirmAction}>
-            {action === "add" ? "Create" : "Rename"}
+          <Button
+            colorScheme="blue"
+            onClick={() => {
+              if (action === "add") {
+                const addStatus = handleAdd(
+                  name,
+                  type,
+                  fileTarget,
+                  treeDirectoryFlatten,
+                  dispatch
+                );
+                if (!addStatus) onCloseModal();
+                setExistName(addStatus);
+              } else {
+                const renameStatus = handleRename(
+                  name,
+                  fileTarget,
+                  treeDirectoryFlatten,
+                  dispatch
+                );
+                if (!renameStatus) onCloseModal();
+                setExistName(renameStatus);
+              }
+            }}
+          >
+            Create
           </Button>
         </ModalFooter>
       </ModalContent>

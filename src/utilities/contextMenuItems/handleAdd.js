@@ -16,7 +16,7 @@ const handleAdd = (name, type, fileTarget, treeFlatten, dispatch) => {
   }
 
   if (isItemExistedTreeDirectory(treeFlatten, newPath)) {
-    return false;
+    return true;
   }
 
   let newItem = {
@@ -49,7 +49,7 @@ const handleAdd = (name, type, fileTarget, treeFlatten, dispatch) => {
     addAction(action);
   }
 
-  return true;
+  return false;
 };
 
 export default handleAdd;
