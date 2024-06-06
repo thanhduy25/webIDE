@@ -1,3 +1,5 @@
+import getFilesInCreateAction from "./getFilesInCreateAction";
+
 const createCreateAction = (filePath, content) => {
   return {
     action: "create",
@@ -11,6 +13,15 @@ const createUpdateAction = (filePath, content) => {
     action: "update",
     file_path: filePath,
     content: content,
+  };
+};
+
+const createMoveAction = (oldPath, newPath) => {
+  return {
+    action: "move",
+    file_path: newPath,
+    previous_path: oldPath,
+    content: "",
   };
 };
 
@@ -33,7 +44,9 @@ const addAction = (action) => {
 };
 
 export {
+  getFilesInCreateAction,
   createCreateAction,
+  createMoveAction,
   createUpdateAction,
   createDeleteAction,
   addAction,

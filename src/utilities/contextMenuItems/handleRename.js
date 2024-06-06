@@ -3,15 +3,21 @@ import {
   updateTreeDirectoryFlatten,
 } from "../../store/treeSlice";
 import { isItemExistedTreeDirectory } from "../common";
-import { ChangeActionIfItemExistInCreateAction } from "../common";
+import {
+  createMoveAction,
+  createDeleteAction,
+  addAction,
+} from "../actionStorage";
+import { getFilesInCreateAction } from "../actionStorage";
+import { get } from "lodash";
 
 const handleRename = (name, fileTarget, treeFlatten, dispatch) => {
   const fileTargetPath = fileTarget.path;
 
-  ChangeActionIfItemExistInCreateAction(name, fileTargetPath);
   const parentPath = fileTargetPath.split("/").slice(0, -1).join("/");
 
   const newPath = parentPath ? parentPath + "/" + name : name;
+
   if (isItemExistedTreeDirectory(treeFlatten, newPath)) {
     return false;
   }
@@ -32,6 +38,57 @@ const handleRename = (name, fileTarget, treeFlatten, dispatch) => {
   );
 
   dispatch(convertFlattenToNestedTreeDirectory());
+
+  let newListActions = [];
+
+  const listActions = localStorage.actions
+    ? JSON.parse(localStorage.actions)
+    : [];
+
+  if (getFilesInCreateAction().includes(fileTargetPath)) {
+    newListActions = listActions.map((action) => {
+      if (action.action === "create" && action.file_path === fileTargetPath) {
+        return {
+          ...action,
+          file_path: newPath,
+        };
+      }
+      return action;
+    });
+  } else {
+    const currentMoveAction = createMoveAction(fileTargetPath, newPath);
+
+    let indexRemoveIfDuplicate = null;
+    let hasChanged = true;
+
+    listActions.forEach((action, index) => {
+      if (action.action === "move") {
+        if (currentMoveAction.previous_path === action.file_path) {
+          if (currentMoveAction.file_path === action.previous_path) {
+            indexRemoveIfDuplicate = index;
+            return;
+          } else {
+            hasChanged = false;
+            action.file_path = currentMoveAction.file_path;
+          }
+        }
+      }
+    });
+
+    if (hasChanged) {
+      if (indexRemoveIfDuplicate !== null) {
+        listActions.splice(indexRemoveIfDuplicate, 1);
+      } else {
+        listActions.push(createMoveAction(fileTargetPath, newPath));
+      }
+    }
+
+    newListActions = listActions;
+  }
+
+  localStorage.actions = JSON.stringify(newListActions);
+
+  return true;
 };
 
 export default handleRename;

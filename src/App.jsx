@@ -58,6 +58,10 @@ function App() {
 
   //Get file tree
   useEffect(() => {
+    if (localStorage.actions) {
+      localStorage.actions = "";
+    }
+
     const getFileTree = async (params) => {
       const baseUrl = `http://localhost/mod/gitlab/api/index.php/repository/tree`;
 
@@ -97,7 +101,7 @@ function App() {
         onClick={() => dispatch(closeContextMenu())}
       >
         <Box>
-          <Box bgGradient="linear(to-r,  #f58f0a,#f5390a)" h="40px">
+          <Box bgGradient="linear(to-r, #f58f0a, #f5390a)" h="40px">
             <ContextMenu />
             {isOpenModal && <HandleFileModal />}
             {isOpenAlertDialog && (

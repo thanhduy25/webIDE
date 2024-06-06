@@ -23,15 +23,14 @@ const handleFileSelected = async (projectId, branch, item, dispatch) => {
   let isImage = false;
 
   if (item.type === "blob") {
+    isImage = checkIsImage(item);
     let content = "";
-    if (item.originalContent) {
-      content = item.originalContent;
+    if (item.content) {
+      content = item.content;
     } else {
       const response = await axios.get(baseUrl + "?" + params);
 
       content = response.data?.data?.content;
-
-      isImage = checkIsImage(item);
 
       if (content) {
         if (isImage) {
@@ -44,12 +43,18 @@ const handleFileSelected = async (projectId, branch, item, dispatch) => {
       }
     }
 
-    dispatch(
-      updateTreeDirectoryFlatten({
-        action: "update",
-        item: { ...item, originalContent: content },
-      })
-    );
+    if (item) {
+      let itemSelected = { ...item, content };
+      if (!item.originalContent) {
+        itemSelected = { ...item, content, originalContent: content };
+      }
+      dispatch(
+        updateTreeDirectoryFlatten({
+          action: "update",
+          item: itemSelected,
+        })
+      );
+    }
     dispatch(
       addFileOpening({
         [item.path]: {

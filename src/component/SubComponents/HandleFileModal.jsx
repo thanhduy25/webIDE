@@ -9,7 +9,9 @@ import {
   Button,
 } from "@chakra-ui/react";
 
-import { useState, useCallback } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+
+import { useState, useCallback, useRef, useEffect } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import { closeModal } from "../../store/modalSlice";
@@ -23,7 +25,7 @@ const HandleFileModal = () => {
 
   const { type, action } = useSelector((state) => state.modal);
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState(action === "rename" ? fileTarget.name : "");
 
   const inputRef = useCallback((node) => {
     if (node !== null) {
@@ -35,7 +37,34 @@ const HandleFileModal = () => {
   }, []);
 
   const dispatch = useDispatch();
+
   const onCloseModal = () => dispatch(closeModal());
+
+  const onConfirmAction = () => {
+    onCloseModal();
+    if (action === "add") {
+      const addStatus = handleAdd(
+        name,
+        type,
+        fileTarget,
+        treeDirectoryFlatten,
+        dispatch
+      );
+    } else {
+      const renameStatus = handleRename(
+        name,
+        fileTarget,
+        treeDirectoryFlatten,
+        dispatch
+      );
+    }
+  };
+
+  const handleEnterKeyDown = (event) => {
+    if (event.key === "Enter") {
+      onConfirmAction();
+    }
+  };
 
   return (
     <Modal isOpen={true} onClick={onCloseModal}>
@@ -51,35 +80,15 @@ const HandleFileModal = () => {
             placeholder={`Enter ${type === "tree" ? "folder" : "file"} name`}
             onChange={(event) => setName(event.target.value)}
             defaultValue={action === "rename" ? fileTarget.name : ""}
+            onKeyDown={handleEnterKeyDown}
           />
         </ModalBody>
         <ModalFooter>
           <Button variant="ghost" mr={3} onClick={onCloseModal}>
             Close
           </Button>
-          <Button
-            colorScheme="blue"
-            onClick={() => {
-              onCloseModal();
-              if (action === "add") {
-                const addStatus = handleAdd(
-                  name,
-                  type,
-                  fileTarget,
-                  treeDirectoryFlatten,
-                  dispatch
-                );
-              } else {
-                const renameStatus = handleRename(
-                  name,
-                  fileTarget,
-                  treeDirectoryFlatten,
-                  dispatch
-                );
-              }
-            }}
-          >
-            Create
+          <Button colorScheme="blue" onClick={onConfirmAction}>
+            {action === "add" ? "Create" : "Rename"}
           </Button>
         </ModalFooter>
       </ModalContent>

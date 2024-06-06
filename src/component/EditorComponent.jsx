@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Image } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
 import React, { forwardRef } from "react";
 import { useSelector } from "react-redux";
@@ -12,30 +12,36 @@ const EditorComponent = forwardRef((_, ref) => {
 
   const componentShow = () => {
     if (fileEditing) {
+      console.log(fileEditing);
       if (fileEditing.isImage) {
         return (
           <div
             style={{
-              width: "80vw",
+              width: "100%",
               height: "80vh",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            <img
+            <Image
+              maxHeight={"100%"}
               src={fileEditing.content}
               style={{ verticalAlign: "center" }}
-            ></img>
+              objectFit={"cover"}
+            ></Image>
           </div>
         );
       }
-      console.log(fileEditing);
       return (
         <Editor
           height="80vh"
           path={fileEditing.path}
-          defaultLanguage={fileEditing.language.toLowerCase()}
+          defaultLanguage={
+            fileEditing.language === undefined
+              ? "text"
+              : fileEditing.language.toLowerCase()
+          }
           defaultValue={fileEditing.content}
           onMount={handleEditorDidMount}
           saveViewState={true}

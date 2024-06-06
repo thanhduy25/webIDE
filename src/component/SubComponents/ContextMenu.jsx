@@ -14,6 +14,10 @@ const ContextMenu = () => {
 
   const dispatch = useDispatch();
 
+  const handleUpload = () => {
+    document.getElementById("fileInput").click();
+  };
+
   const sharedContextMenuItemList = [
     {
       name: "Rename",
@@ -41,6 +45,10 @@ const ContextMenu = () => {
       onClick: () => {
         dispatch(openModal({ type: "tree", action: "add" }));
       },
+    },
+    {
+      name: "Upload file",
+      onClick: handleUpload,
     },
   ];
 

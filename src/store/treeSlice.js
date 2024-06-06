@@ -1,9 +1,11 @@
 import { createSlice, current } from "@reduxjs/toolkit";
+import _ from "lodash";
 
 const initialTreeState = {
   treeDirectory: [],
   treeDirectoryFlatten: {},
-  fileTarget: {},
+  originalTreeDirectoryFlatten: {},
+  fileTarget: "root",
 };
 
 export const treeSlice = createSlice({
@@ -32,6 +34,9 @@ export const treeSlice = createSlice({
       flatten([...current(state.treeDirectory)]);
 
       state.treeDirectoryFlatten = treeDirectoryFlatten;
+      if (Object.keys(state.originalTreeDirectoryFlatten).length === 0) {
+        state.originalTreeDirectoryFlatten = treeDirectoryFlatten;
+      }
     },
     updateTreeDirectoryFlatten: (state, action) => {
       switch (action.payload.action) {
@@ -115,7 +120,6 @@ export const treeSlice = createSlice({
         });
         highestLevel--;
       }
-
       state.treeDirectory = Object.values(treeFlattenClone);
     },
   },

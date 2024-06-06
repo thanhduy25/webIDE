@@ -16,11 +16,7 @@ import {
   addAction,
 } from "./actionStorage";
 
-import {
-  isItemExistedTreeDirectory,
-  ChangeActionIfItemExistInCreateAction,
-  handleCommit,
-} from "./common";
+import { isItemExistedTreeDirectory, handleCommit } from "./common";
 
 export {
   getParams,
@@ -34,7 +30,6 @@ export {
   createDeleteAction,
   addAction,
   isItemExistedTreeDirectory,
-  ChangeActionIfItemExistInCreateAction,
   handleCommit,
   extensionFileMapping,
 };
