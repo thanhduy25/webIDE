@@ -4,6 +4,7 @@ import React, { forwardRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import TabsEditing from "./Editor/TabsEditing";
 import { setFileEditing } from "../store/editorSlice";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const EditorComponent = forwardRef((_, ref) => {
   const dispatch = useDispatch();

@@ -98,9 +98,7 @@ function App() {
     getFileTree(params);
   }, []);
 
-  useHotkeys("ctrl+s", (event) => {
-    event.preventDefault();
-    // console.log(treeDirectoryFlatten[fileEditing.path].content);
+  const onSave = () => {
     dispatch(
       handleSave({
         path: fileEditing.path,
@@ -108,6 +106,11 @@ function App() {
       })
     );
     dispatch(setFileEditing({ ...fileEditing, hasChanged: false }));
+  };
+
+  useHotkeys("ctrl+s", (event) => {
+    event.preventDefault();
+    onSave();
   });
 
   //render ui
@@ -134,21 +137,7 @@ function App() {
 
             <Flex justifyContent="flex-start" gap={5}>
               <BackButton onClick={() => handleBackClick(1)} />
-              {fileEditing && (
-                <SaveButton
-                  onClick={() => {
-                    dispatch(
-                      handleSave({
-                        path: fileEditing.path,
-                        newContent: editorRef.current.getValue(),
-                      })
-                    );
-                    dispatch(
-                      setFileEditing({ ...fileEditing, hasChanged: false })
-                    );
-                  }}
-                />
-              )}
+              {fileEditing && <SaveButton onClick={onSave} />}
             </Flex>
           </Box>
         </Box>

@@ -22,6 +22,7 @@ const handleFileSelected = async (
   let itemSelected = null;
 
   const baseUrl = `http://localhost/mod/gitlab/api/index.php/repository/files`;
+
   const params = new URLSearchParams({
     project_id: projectId,
     ref: branch,
@@ -29,6 +30,7 @@ const handleFileSelected = async (
   }).toString();
 
   let isImage = false;
+
   if (item.type === "blob") {
     isImage = checkIsImage(item);
     let content = "";
@@ -52,7 +54,7 @@ const handleFileSelected = async (
       }
       itemSelected = { ...item, content, originalContent: content };
     }
-    console.log(itemSelected);
+
     dispatch(
       updateTreeDirectoryFlatten({
         action: "update",

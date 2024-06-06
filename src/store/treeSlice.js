@@ -1,5 +1,6 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 import _ from "lodash";
+import { createUpdateAction, addAction } from "../utilities";
 
 const initialTreeState = {
   treeDirectory: [],
@@ -52,6 +53,36 @@ export const treeSlice = createSlice({
             ...state.treeDirectoryFlatten,
             [action.payload.item.path]: action.payload.item,
           };
+
+          if (
+            action.payload.item.content != action.payload.item.originalContent
+          ) {
+            const actionsList = localStorage.actions
+              ? JSON.parse(localStorage.actions)
+              : [];
+
+            let isExist = false;
+            const newActionsList = actionsList.map((act) => {
+              if (
+                act.action === "update" &&
+                act.file_path === action.payload.item.path
+              ) {
+                act.content = action.payload.item.content;
+                isExist = true;
+              }
+              return act;
+            });
+
+            localStorage.actions = JSON.stringify(newActionsList);
+
+            if (!isExist) {
+              const actionUpdate = createUpdateAction(
+                action.payload.item.path,
+                action.payload.item.content
+              );
+              addAction(actionUpdate);
+            }
+          }
           break;
         }
         case "rename": {
