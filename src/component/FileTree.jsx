@@ -8,8 +8,8 @@ const FileTree = ({ data }) => {
   const dispatch = useDispatch();
   const [isResizing, setIsResizing] = useState(false);
   const [initialWidth, setInitialWidth] = useState(null);
-  const [treeWidth, setTreeWidth] = useState("170px");
-  const [treeHeight] = useState("100vh");
+  const [treeWidth, setTreeWidth] = useState("250px");
+  const [treeHeight] = useState("95vh");
 
   const containerRef = useRef(null);
 
@@ -42,7 +42,7 @@ const FileTree = ({ data }) => {
   return (
     <div
       ref={containerRef}
-      style={{ position: "relative", height: treeHeight}}
+      style={{ marginTop: "35px", position: "relative", height: treeHeight }}
       onContextMenu={(event) => {
         event.preventDefault();
         dispatch(openContextMenu({ xPos: event.clientX, yPos: event.clientY }));
@@ -54,9 +54,9 @@ const FileTree = ({ data }) => {
           height: treeHeight,
           width: treeWidth,
           transition: "width 0.001s",
-          borderRight: "1px solid #ddd",
+          borderRight: "0px",
           overflowY: "auto",
-          overflowX: "hidden"
+          overflowX: "hidden",
         }}
         onDoubleClick={(event) => event.preventDefault()}
       >

@@ -9,10 +9,11 @@ import {
   HandleFileModal,
   ContextMenu,
   AlertComponent,
+  TabsEditing,
 } from "./component";
 
 import { Flex, Box, ChakraProvider } from "@chakra-ui/react";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import axios from "axios";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -74,7 +75,7 @@ function App() {
       const queryParams = new URLSearchParams({
         project_id: params.project_id,
         ref: params.branch,
-        recursive: true,
+        recursive: false,
       }).toString();
 
       try {
@@ -116,27 +117,34 @@ function App() {
   //render ui
   return (
     <ChakraProvider>
+      <ContextMenu />
+      {isOpenModal && <HandleFileModal />}
+      {isOpenAlertDialog && (
+        <AlertComponent
+          onCancelClick={() => dispatch(closeAlertDialog())}
+          onDeleteClick={() => {
+            dispatch(closeAlertDialog());
+            handleDelete(fileTarget, dispatch);
+          }}
+        />
+      )}
       <Box
         width="100vw"
         height="100vh"
         onClick={() => dispatch(closeContextMenu())}
       >
         <Box>
-          <Box bgGradient="linear(to-r, #f58f0a, #f5390a)" h="40px">
-            <ContextMenu />
-            {isOpenModal && <HandleFileModal />}
-            {isOpenAlertDialog && (
-              <AlertComponent
-                onCancelClick={() => dispatch(closeAlertDialog())}
-                onDeleteClick={() => {
-                  dispatch(closeAlertDialog());
-                  handleDelete(fileTarget, dispatch);
-                }}
-              />
-            )}
-
+          <Box
+            position={"fixed"}
+            top={"0"}
+            left={"0"}
+            zIndex={"4"}
+            w="100%"
+            bgGradient="linear(to-r, #f58f0a, #f5390a)"
+            h="40px"
+          >
             <Flex justifyContent="flex-start" gap={5}>
-              <BackButton onClick={() => handleBackClick(1)} />
+              <BackButton />
               {fileEditing && <SaveButton onClick={onSave} />}
             </Flex>
           </Box>
@@ -144,23 +152,29 @@ function App() {
         <Flex flexDirection="row" height="100%">
           <Box borderRight="1px solid #ddd">
             <Flex flexDirection="row" height="100%">
-              <Box bgGradient="linear(to-t,,#f5390a,  #f58f0a)">
+              <Box
+                position={"fixed"}
+                h={"100%"}
+                bgGradient="linear(to-t,,#f5390a,  #f58f0a)"
+              >
                 <Navbar />
               </Box>
-
-              {contentShow && (
-                <>
-                  {contentShow === "commit" && <CommitUI />}
-                  {contentShow === "tree" && (
-                    <FileTree data={treeDirectory}></FileTree>
-                  )}
-                </>
-              )}
+              <Box marginLeft={"50px"}>
+                {contentShow && (
+                  <>
+                    {contentShow === "commit" && <CommitUI />}
+                    {contentShow === "tree" && (
+                      <FileTree data={treeDirectory}></FileTree>
+                    )}
+                  </>
+                )}
+              </Box>
             </Flex>
           </Box>
           <Box flex="1">
             <Flex flexDirection="column" height="80%">
               <Box flex="1">
+                <TabsEditing />
                 <Box bg="transparent">
                   <EditorComponent ref={editorRef} />
                 </Box>

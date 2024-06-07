@@ -1,10 +1,10 @@
 import { Box, Image } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import TabsEditing from "./Editor/TabsEditing";
+// import TabsEditing from "./Editor/TabsEditing";
 import { setFileEditing } from "../store/editorSlice";
-import { useHotkeys } from "react-hotkeys-hook";
+// import { useHotkeys } from "react-hotkeys-hook";
 
 const EditorComponent = forwardRef((_, ref) => {
   const dispatch = useDispatch();
@@ -42,7 +42,7 @@ const EditorComponent = forwardRef((_, ref) => {
             }}
           >
             <Image
-              maxHeight={"100%"}
+              maxHeight={"80%"}
               src={fileEditing.content}
               style={{ verticalAlign: "center" }}
               objectFit={"cover"}
@@ -51,32 +51,29 @@ const EditorComponent = forwardRef((_, ref) => {
         );
       }
       return (
-        <Editor
-          height="80vh"
-          path={fileEditing.path}
-          defaultLanguage={
-            fileEditing.language === undefined
-              ? "text"
-              : fileEditing.language.toLowerCase()
-          }
-          defaultValue={fileEditing.content}
-          onMount={handleEditorDidMount}
-          onChange={(value) => {
-            handleEditorChange(value);
-          }}
-          saveViewState={true}
-        />
+        <Box>
+          <Editor
+            height="75vh"
+            path={fileEditing.path}
+            defaultLanguage={
+              fileEditing.language === undefined
+                ? "text"
+                : fileEditing.language.toLowerCase()
+            }
+            defaultValue={fileEditing.content}
+            onMount={handleEditorDidMount}
+            onChange={(value) => {
+              handleEditorChange(value);
+            }}
+            saveViewState={true}
+          />
+        </Box>
       );
     }
   };
 
   // Nếu có file được chọn, hiển thị nội dung của file đó trong Editor
-  return (
-    <Box>
-      <TabsEditing />
-      {componentShow()}
-    </Box>
-  );
+  return <Box>{componentShow()}</Box>;
 });
 
 export default EditorComponent;

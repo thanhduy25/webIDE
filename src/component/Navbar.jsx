@@ -1,6 +1,5 @@
 import { Box, VStack } from "@chakra-ui/react";
 import { FaFileUpload, FaFile, FaGitAlt } from "react-icons/fa";
-import React from "react";
 import { InputFile, NavbarItem } from "./NavbarComponents";
 
 import { useDispatch } from "react-redux";
@@ -30,21 +29,29 @@ const Navbar = () => {
       onClick: handleUpload,
     },
   ];
+    const handleWheel = (event) => {
+      // Ngăn chặn hành động mặc định của sự kiện lăn chuột
+      event.preventDefault();
+    };
 
   return (
     <Box
       color="black"
-      width="30px"
-      height="100vh"
+      width="45px"
+      height="100%"
       display="flex"
       flexDirection="column"
       alignItems="center"
-      py={4}
+      py={1}
+      overflow={"auto"}
+      onWheel={handleWheel}
+
     >
       <InputFile />
-      <VStack spacing={2}>
+      <VStack paddingTop="29px" spacing={1}>
         {navbarItems.map(({ label, icon, onClick }, index) => (
-          <NavbarItem key={index} label={label} icon={icon} onClick={onClick} />
+          <NavbarItem
+            key={index} label={label} icon={icon} onClick={onClick} />
         ))}
       </VStack>
     </Box>

@@ -21,7 +21,7 @@ const Comment = () => {
         Comment
       </Button>
       <Collapse in={isOpen} animateOpacity>
-        <Flex spacing="5px" height="16vh">
+        <Flex spacing="5px" height="14vh">
           <Textarea
             backgroundColor="#eeeeee"
             placeholder="Enter comment..."

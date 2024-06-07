@@ -25,16 +25,19 @@ const TabsEditing = () => {
         Object.entries(listFileOpening).map(([path, fileOpening]) => {
           return (
             <Button
+              zIndex={"5"}
+              top={"0"}
               key={path}
-              bgColor={isCurrentTabPath(path) ? "gray.200" : "white"}
+              color={"#742f0a"}
+              bgColor={isCurrentTabPath(path) ? "white" : "#ebccbb"}
               onClick={() => {
                 dispatch(setFileEditing(fileOpening));
               }}
-              border={"1px"}
-              borderColor={"gray"}
+              borderRight={"1px"}
+              borderColor={"#612a0b"}
               borderRadius={"0"}
               _hover={{
-                bgColor: isCurrentTabPath(path) ? "gray.200" : "white",
+                bgColor: isCurrentTabPath(path) ? "#ebccbb" : "white",
               }}
               paddingRight={"6px"}
             >

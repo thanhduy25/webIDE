@@ -5,6 +5,7 @@ import {
   AlertDialogContent,
   AlertDialogBody,
   AlertDialogFooter,
+  useToast,
 } from "@chakra-ui/react";
 
 import React from "react";
@@ -12,6 +13,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 function AlertComponent({ onCancelClick, onDeleteClick }) {
+  const toast = useToast();
   const { fileTarget } = useSelector((state) => state.tree);
   const cancelRef = React.useRef();
 
@@ -32,7 +34,21 @@ function AlertComponent({ onCancelClick, onDeleteClick }) {
               <Button ref={cancelRef} onClick={onCancelClick}>
                 Cancel
               </Button>
-              <Button colorScheme="red" onClick={onDeleteClick} ml={3}>
+              <Button
+                colorScheme="red"
+                onClick={() => {
+                  onDeleteClick,
+                    toast({
+                      position: "top",
+                      title: "Deleted !",
+                      description: "",
+                      status: "success",
+                      duration: 3000,
+                      isClosable: true,
+                    });
+                }}
+                ml={3}
+              >
                 Delete
               </Button>
             </AlertDialogFooter>
