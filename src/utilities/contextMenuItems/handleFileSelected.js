@@ -82,9 +82,16 @@ const handleFileSelected = async (
         actionsList[isExistInMoveStatus.index] = {
           ...actionsList[isExistInMoveStatus.index],
           content: content,
+          originalContent: content,
         };
 
         localStorage.actions = JSON.stringify(actionsList);
+        dispatch(
+          updateTreeDirectoryFlatten({
+            action: "update",
+            item: itemSelected,
+          })
+        );
       } else {
         dispatch(
           updateTreeDirectoryFlatten({

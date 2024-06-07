@@ -1,16 +1,46 @@
 import React, { useState, useRef } from "react";
-import { Box, Input, Button, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Input,
+  Button,
+  List,
+  ListItem,
+  Flex,
+  VStack,
+} from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 
-import { handleCommit } from "../utilities";
 import { useSelector } from "react-redux";
 
+import { handleCommit, handleFileSelected } from "../utilities";
+
+const getNewFilesAndFolders = () => {
+  const actionsString = localStorage.getItem("actions");
+  const actions = actionsString ? JSON.parse(actionsString) : [];
+  const newFilesAndFolders = [];
+
+  actions.forEach((action) => {
+    if (
+      action.action === "create" ||
+      action.action === "update" ||
+      action.action === "move" ||
+      action.action === "delete"
+    ) {
+      const fileName = action.file_path.split("/").pop();
+      newFilesAndFolders.push(fileName);
+    }
+  });
+  return newFilesAndFolders;
+};
+console.log(localStorage.getItem("actions"));
+
 const CommitUI = () => {
+  const newFilesAndFolders = getNewFilesAndFolders();
   const [commitMessage, setCommitMessage] = useState("");
   const [isResizing, setIsResizing] = useState(false);
   const [initialWidth, setInitialWidth] = useState(null);
-  const [commitWidth, setCommitWidth] = useState("250px");
-  const commitHeight = "100vh";
+  const [commitWidth, setCommitWidth] = useState("300px");
+  const commitHeight = "90vh";
   const toast = useToast();
 
   const { treeDirectoryFlatten } = useSelector((state) => state.tree);
@@ -45,6 +75,56 @@ const CommitUI = () => {
     };
   });
 
+  const getActionAndColor = (action) => {
+    switch (action) {
+      case "create":
+        return {
+          color: "green",
+          char: "U",
+        };
+      case "update":
+        return {
+          color: "orange",
+          char: "M",
+        };
+      case "move":
+        return {
+          color: "orange",
+          char: "M",
+        };
+      case "delete":
+        return {
+          color: "red",
+          char: "D",
+        };
+    }
+  };
+
+  const renameDeleteCommit = (pathInfo) => {
+    return (
+      <Flex w="100%">
+        <Box position={"relative"} display="inline-block">
+          <span
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: 0,
+              right: 0,
+              borderTop: "1px solid black",
+              transform: "translateY(-1px)",
+            }}
+          ></span>
+          {pathInfo.oldPath}
+        </Box>
+        {pathInfo.newPath && (
+          <Box ml={"2     px"}>
+            <p>{`→ ${pathInfo.newPath}`}</p>
+          </Box>
+        )}
+      </Flex>
+    );
+  };
+
   return (
     <>
       <Box
@@ -56,6 +136,7 @@ const CommitUI = () => {
           transition: "width 0.001s",
           borderRight: "1px solid #ddd",
           overflow: "hidden",
+          marginTop: "35px",
         }}
         paddingX={"8px"}
       >
@@ -70,16 +151,16 @@ const CommitUI = () => {
           }}
           onMouseDown={handleMouseDown}
         ></Box>
-        <Box>
-          <Flex mt={2} justifyContent="flex">
+        <VStack>
+          <Box mt={2} justifyContent="flex">
             <Input
               placeholder="Enter commit message"
               value={commitMessage}
               onChange={(e) => setCommitMessage(e.target.value)}
               w="100%"
             />
-          </Flex>
-          <Flex mt={2} justifyContent="flex">
+          </Box>
+          <Box w={"100%"} mt={2} justifyContent="flex">
             <Button
               border="0px"
               borderRadius="7px"
@@ -101,8 +182,49 @@ const CommitUI = () => {
             >
               Commit
             </Button>
-          </Flex>
-        </Box>
+          </Box>
+          <Box margin={"3px"} w={"100%"}>
+            <List spacing={1} style={{ textAlign: "left" }}>
+              {actions.map((action, index) => {
+                const { color, char } = getActionAndColor(action.action);
+                let pathInfo = {};
+                if (action.action === "move") {
+                  pathInfo = {
+                    oldPath: action.previous_path,
+                    newPath: action.file_path,
+                  };
+                } else if (action.action === "delete") {
+                  pathInfo = {
+                    oldPath: action.file_path,
+                  };
+                }
+                return (
+                  <>
+                    <Button
+                      key={index}
+                      h="20px"
+                      bg="transparent"
+                      w="100%"
+                      onClick={handleFileSelected}
+                    >
+                      <Flex w="100%" justifyContent={"space-between"}>
+                        {action.action === "move" ||
+                        action.action === "delete" ? (
+                          renameDeleteCommit(pathInfo)
+                        ) : (
+                          <ListItem key={index}>
+                            {newFilesAndFolders[index]}
+                          </ListItem>
+                        )}
+                        <Box color={color}>{char}</Box>
+                      </Flex>
+                    </Button>
+                  </>
+                );
+              })}
+            </List>
+          </Box>
+        </VStack>
       </Box>
     </>
   );

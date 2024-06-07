@@ -57,15 +57,16 @@ export const treeSlice = createSlice({
           const actionsList = localStorage.actions
             ? JSON.parse(localStorage.actions)
             : [];
-
+          console.log(action.payload.item);
           if (
             action.payload.item.content != action.payload.item.originalContent
           ) {
-            console.log("vo 3");
             let isExist = false;
             const newActionsList = actionsList.map((act) => {
               if (
-                (act.action === "create" || act.action === "update") &&
+                (act.action === "create" ||
+                  act.action === "update" ||
+                  act.action === "move") &&
                 act.file_path === action.payload.item.path
               ) {
                 act.content = action.payload.item.content;
@@ -93,10 +94,10 @@ export const treeSlice = createSlice({
                 return act;
               }
 
-              if (act.action === "create") {
+              if (act.action === "create" || act.action === "move") {
                 return {
                   ...act,
-                  content: "",
+                  content: state.treeDirectoryFlatten[act.file_path].content,
                 };
               }
 
@@ -105,7 +106,11 @@ export const treeSlice = createSlice({
               }
               return act;
             });
-            newActionsList.splice(indexRemove, 1);
+
+            if (indexRemove !== null) {
+              newActionsList.splice(indexRemove, 1);
+            }
+
             localStorage.actions = JSON.stringify(newActionsList);
           }
           break;

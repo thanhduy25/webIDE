@@ -10,15 +10,17 @@ const handleCommit = async (
   author_email,
   treeFlatten
 ) => {
-  console.log(message);
   const actions = localStorage.actions ? JSON.parse(localStorage.actions) : [];
   if (actions.length === 0) return;
 
   const actionsConfirm = actions.map((action) => {
-    if (action.action === "create" || action.action === "update") {
+    if (
+      action.action === "create" ||
+      action.action === "update" ||
+      action.action === "move"
+    ) {
       const content = treeFlatten[action.file_path].content;
-      const newContent = { ...action, content };
-      console.log(newContent);
+
       return {
         ...action,
         content,
@@ -26,7 +28,7 @@ const handleCommit = async (
     }
     return action;
   });
-  console.log(actionsConfirm);
+
   const params = getParams();
   const response = await axios.post(
     "http://localhost/mod/gitlab/api/index.php/repository/commits",
@@ -36,10 +38,10 @@ const handleCommit = async (
       commit_message: message,
       author_name: "John Doe",
       author_email: "johndoe@example.com",
-      actions: actions,
+      actions: actionsConfirm,
     }
   );
-  console.log(response.data);
+  console.log(response);
 };
 
 export { isItemExistedTreeDirectory, handleCommit };

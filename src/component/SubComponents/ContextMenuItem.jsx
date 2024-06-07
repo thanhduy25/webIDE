@@ -2,8 +2,9 @@ import { Button, ListItem } from "@chakra-ui/react";
 
 const ContextMenuItem = ({ onClick, children }) => {
   return (
-    <ListItem>
+    <ListItem textAlign={"left"}>
       <Button
+        h="30px"
         bg="transparent"
         width={"100%"}
         borderRadius={"2px"}

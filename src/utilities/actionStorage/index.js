@@ -16,12 +16,20 @@ const createUpdateAction = (filePath, content) => {
   };
 };
 
-const createMoveAction = (oldPath, newPath) => {
+const createMoveAction = (oldPath, newPath, content = null) => {
+  if (content === null) {
+    return {
+      action: "move",
+      file_path: newPath,
+      previous_path: oldPath,
+    };
+  }
+
   return {
     action: "move",
     file_path: newPath,
     previous_path: oldPath,
-    content: "",
+    content,
   };
 };
 

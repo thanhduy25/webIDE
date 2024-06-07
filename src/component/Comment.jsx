@@ -21,14 +21,14 @@ const Comment = () => {
         Comment
       </Button>
       <Collapse in={isOpen} animateOpacity>
-        <Flex spacing="5px" height="16vh">
+        <Flex spacing="5px" height="14vh" paddingX={"8px"} direction={"column"}>
           <Textarea
             backgroundColor="#eeeeee"
             placeholder="Enter comment..."
             resize="vertical"
             height="85px"
-            w="200px"
-            size="md"
+            w="100%"
+            size="lg"
             focusBorderColor="blue.500"
             borderRadius="5px"
             border="1px"
@@ -38,7 +38,7 @@ const Comment = () => {
             margin="5px"
           />
           <Box>
-            <Stack spacing={1}>
+            <Flex spacing={1}>
               <Button
                 onClick={onToggle}
                 colorScheme="blue"
@@ -71,7 +71,7 @@ const Comment = () => {
               >
                 Back
               </Button>
-            </Stack>
+            </Flex>
           </Box>
         </Flex>
       </Collapse>

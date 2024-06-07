@@ -7,11 +7,11 @@ const BackButton = ({ id }) => {
 
   return (
     <Button
-      ml="29px"
-      mt="5px"
+      ml="45px"
+      mt="7px"
       variant="solid"
       // w="45px"
-      h="20px"
+      h="25px"
       // color="black"
       backgroundColor="white"
       borderRadius="3px"

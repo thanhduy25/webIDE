@@ -45,7 +45,7 @@ const EditorComponent = forwardRef((_, ref) => {
             }}
           >
             <Image
-              maxHeight={"85%"}
+              maxHeight={"80%"}
               src={fileEditing.content}
               style={{ verticalAlign: "center" }}
               objectFit={"cover"}
@@ -55,32 +55,29 @@ const EditorComponent = forwardRef((_, ref) => {
       }
 
       return (
-        <Editor
-          height="80vh"
-          path={fileEditing.path}
-          defaultLanguage={
-            fileEditing.language === undefined
-              ? "text"
-              : fileEditing.language.toLowerCase()
-          }
-          defaultValue={fileEditing.content}
-          onMount={handleEditorDidMount}
-          onChange={(value) => {
-            handleEditorChange(value);
-          }}
-          saveViewState={true}
-        />
+        <Box>
+          <Editor
+            height="75vh"
+            path={fileEditing.path}
+            defaultLanguage={
+              fileEditing.language === undefined
+                ? "text"
+                : fileEditing.language.toLowerCase()
+            }
+            defaultValue={fileEditing.content}
+            onMount={handleEditorDidMount}
+            onChange={(value) => {
+              handleEditorChange(value);
+            }}
+            saveViewState={true}
+          />
+        </Box>
       );
     }
   };
 
   // Nếu có file được chọn, hiển thị nội dung của file đó trong Editor
-  return (
-    <Box>
-      <TabsEditing />
-      {componentShow()}
-    </Box>
-  );
+  return <Box>{componentShow()}</Box>;
 });
 
 export default EditorComponent;

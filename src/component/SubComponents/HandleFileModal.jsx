@@ -28,6 +28,10 @@ const HandleFileModal = () => {
   const [name, setName] = useState(action == "rename" ? fileTarget.name : "");
   const [existName, setExistName] = useState(false);
 
+  const isFileNameDuplicate = (newName, treeDirectoryFlatten) => {
+    return treeDirectoryFlatten.some((item) => item.name === newName);
+  };
+
   const inputRef = useCallback((node) => {
     if (node !== null) {
       if (fileTarget.type === "blob" && node.value.includes(".")) {

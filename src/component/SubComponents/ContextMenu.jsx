@@ -57,24 +57,35 @@ const ContextMenu = () => {
     contextMenuItemList.unshift(...contextMenuItemListFolder);
   }
 
+  const menuWidth = 200;
+  const menuHeight = 200;
+
+  const adjustedXPos =
+    xPos + menuWidth > window.innerWidth ? window.innerWidth - menuWidth : xPos;
+  const adjustedYPos =
+    yPos + menuHeight > window.innerHeight
+      ? window.innerHeight - menuHeight
+      : yPos;
+
   return (
     <>
       {isOpen && (
         <Box
           style={{
             position: "absolute",
-            left: xPos,
-            top: yPos,
+            left: adjustedXPos,
+            top: adjustedYPos,
             backgroundColor: "#e8e8e8",
-            boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 2px 5px rgba(0, 0, 0, 0.3)",
             borderRadius: "5px",
+            w: "80px",
             zIndex: 1000,
           }}
         >
           <List
             spacing={2}
             background={"white"}
-            border={"1px"}
+            border={"0px"}
             borderColor={"black"}
           >
             {contextMenuItemList.map(({ name, onClick }, index) => (

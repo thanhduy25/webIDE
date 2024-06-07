@@ -62,10 +62,10 @@ const TreeItem = ({ item }) => {
           <Icon color="#dddddd" as={MdInsertDriveFile} />
         )}
         <Text
-          ml="3"
           overflow={"hidden"}
           whiteSpace={"nowrap"}
           textOverflow={"ellipsis"}
+          ml="3"
         >
           {item.name}
         </Text>
