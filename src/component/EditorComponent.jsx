@@ -17,6 +17,9 @@ const EditorComponent = forwardRef((_, ref) => {
   }
 
   const handleEditorChange = (value) => {
+    console.log(value);
+    console.log("---", treeDirectoryFlatten[fileEditing.path].content);
+    console.log(value !== treeDirectoryFlatten[fileEditing.path].content);
     if (value !== treeDirectoryFlatten[fileEditing.path].content) {
       dispatch(
         setFileEditing({ ...fileEditing, content: value, hasChanged: true })
@@ -42,7 +45,7 @@ const EditorComponent = forwardRef((_, ref) => {
             }}
           >
             <Image
-              maxHeight={"100%"}
+              maxHeight={"85%"}
               src={fileEditing.content}
               style={{ verticalAlign: "center" }}
               objectFit={"cover"}
@@ -50,6 +53,7 @@ const EditorComponent = forwardRef((_, ref) => {
           </div>
         );
       }
+
       return (
         <Editor
           height="80vh"

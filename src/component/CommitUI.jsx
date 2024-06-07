@@ -3,6 +3,7 @@ import { Box, Input, Button, Flex } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 
 import { handleCommit } from "../utilities";
+import { useSelector } from "react-redux";
 
 const CommitUI = () => {
   const [commitMessage, setCommitMessage] = useState("");
@@ -12,21 +13,26 @@ const CommitUI = () => {
   const commitHeight = "100vh";
   const toast = useToast();
 
+  const { treeDirectoryFlatten } = useSelector((state) => state.tree);
+
   const containerRef = useRef(null);
 
   const handleMouseDown = (e) => {
+    e.preventDefault();
     setIsResizing(true);
     setInitialWidth(containerRef.current.clientWidth - e.clientX);
   };
 
   const handleMouseMove = (e) => {
+    e.preventDefault();
     if (isResizing) {
       const newWidth = initialWidth + e.clientX;
       setCommitWidth(newWidth + "px");
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e) => {
+    e.preventDefault();
     setIsResizing(false);
   };
 
@@ -42,6 +48,7 @@ const CommitUI = () => {
   return (
     <>
       <Box
+        ref={containerRef}
         style={{
           position: "relative",
           height: commitHeight,
@@ -81,7 +88,7 @@ const CommitUI = () => {
               w="100%"
               h="28px"
               onClick={() => {
-                handleCommit();
+                handleCommit(commitMessage, "", "", treeDirectoryFlatten);
                 toast({
                   position: "top",
                   title: "Commited !",

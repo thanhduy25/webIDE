@@ -14,18 +14,21 @@ const FileTree = ({ data }) => {
   const containerRef = useRef(null);
 
   const handleMouseDown = (e) => {
+    e.preventDefault();
     setIsResizing(true);
     setInitialWidth(containerRef.current.clientWidth - e.clientX);
   };
 
   const handleMouseMove = (e) => {
+    e.preventDefault();
     if (isResizing) {
       const newWidth = initialWidth + e.clientX;
       setTreeWidth(newWidth + "px");
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e) => {
+    e.preventDefault();
     setIsResizing(false);
   };
 
@@ -42,7 +45,7 @@ const FileTree = ({ data }) => {
   return (
     <div
       ref={containerRef}
-      style={{ position: "relative", height: treeHeight}}
+      style={{ position: "relative", height: treeHeight }}
       onContextMenu={(event) => {
         event.preventDefault();
         dispatch(openContextMenu({ xPos: event.clientX, yPos: event.clientY }));
@@ -56,7 +59,7 @@ const FileTree = ({ data }) => {
           transition: "width 0.001s",
           borderRight: "1px solid #ddd",
           overflowY: "auto",
-          overflowX: "hidden"
+          overflowX: "hidden",
         }}
         onDoubleClick={(event) => event.preventDefault()}
       >

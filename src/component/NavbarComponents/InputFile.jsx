@@ -1,10 +1,10 @@
 import { useSelector, useDispatch } from "react-redux";
-import { updateTree } from "../../store/treeSlice.js";
 import { useToast } from "@chakra-ui/react";
 import {
   updateTreeDirectoryFlatten,
   convertFlattenToNestedTreeDirectory,
 } from "../../store/treeSlice.js";
+import { createCreateAction, addAction } from "../../utilities/index.js";
 
 const InputFile = () => {
   const { fileTarget } = useSelector((state) => state.tree);
@@ -29,8 +29,9 @@ const InputFile = () => {
               : fileTarget.path + "/" + file.name,
           content: file.type.includes("image/")
             ? fileData
-            : fileData.split(",")[1],
+            : atob(fileData.split(",")[1]),
           type: "blob",
+          isUpload: true,
         };
         dispatch(
           updateTreeDirectoryFlatten({
@@ -40,6 +41,12 @@ const InputFile = () => {
         );
 
         dispatch(convertFlattenToNestedTreeDirectory());
+
+        const action = createCreateAction(
+          newItem.path === undefined ? "" : newItem.path,
+          file.type.includes("image/") ? fileData : atob(fileData.split(",")[1])
+        );
+        addAction(action);
 
         toast({
           position: "top",

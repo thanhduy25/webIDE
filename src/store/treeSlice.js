@@ -54,26 +54,27 @@ export const treeSlice = createSlice({
             [action.payload.item.path]: action.payload.item,
           };
 
+          const actionsList = localStorage.actions
+            ? JSON.parse(localStorage.actions)
+            : [];
+
           if (
             action.payload.item.content != action.payload.item.originalContent
           ) {
-            const actionsList = localStorage.actions
-              ? JSON.parse(localStorage.actions)
-              : [];
-
+            console.log("vo 3");
             let isExist = false;
             const newActionsList = actionsList.map((act) => {
               if (
-                act.action === "update" &&
+                (act.action === "create" || act.action === "update") &&
                 act.file_path === action.payload.item.path
               ) {
                 act.content = action.payload.item.content;
                 isExist = true;
+                return act;
               }
+
               return act;
             });
-
-            localStorage.actions = JSON.stringify(newActionsList);
 
             if (!isExist) {
               const actionUpdate = createUpdateAction(
@@ -81,7 +82,31 @@ export const treeSlice = createSlice({
                 action.payload.item.content
               );
               addAction(actionUpdate);
+            } else {
+              localStorage.actions = JSON.stringify(newActionsList);
             }
+          } else {
+            let indexRemove = null;
+
+            let newActionsList = actionsList.map((act, index) => {
+              if (!(act.file_path === action.payload.item.path)) {
+                return act;
+              }
+
+              if (act.action === "create") {
+                return {
+                  ...act,
+                  content: "",
+                };
+              }
+
+              if (act.action === "update") {
+                indexRemove = index;
+              }
+              return act;
+            });
+            newActionsList.splice(indexRemove, 1);
+            localStorage.actions = JSON.stringify(newActionsList);
           }
           break;
         }

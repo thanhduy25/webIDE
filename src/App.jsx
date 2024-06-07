@@ -79,7 +79,7 @@ function App() {
 
       try {
         const response = await axios.get(baseUrl + "?" + queryParams);
-
+        console.log(response.data);
         dispatch(updateTree(response.data.data));
         dispatch(convertTreeDirectoryFlatten());
       } catch (error) {
@@ -116,30 +116,28 @@ function App() {
   //render ui
   return (
     <ChakraProvider>
+      <ContextMenu />
+      {isOpenModal && <HandleFileModal />}
+      {isOpenAlertDialog && (
+        <AlertComponent
+          onCancelClick={() => dispatch(closeAlertDialog())}
+          onDeleteClick={() => {
+            dispatch(closeAlertDialog());
+            handleDelete(fileTarget, dispatch);
+          }}
+        />
+      )}
+
       <Box
         width="100vw"
         height="100vh"
         onClick={() => dispatch(closeContextMenu())}
       >
-        <Box>
-          <Box bgGradient="linear(to-r, #f58f0a, #f5390a)" h="40px">
-            <ContextMenu />
-            {isOpenModal && <HandleFileModal />}
-            {isOpenAlertDialog && (
-              <AlertComponent
-                onCancelClick={() => dispatch(closeAlertDialog())}
-                onDeleteClick={() => {
-                  dispatch(closeAlertDialog());
-                  handleDelete(fileTarget, dispatch);
-                }}
-              />
-            )}
-
-            <Flex justifyContent="flex-start" gap={5}>
-              <BackButton onClick={() => handleBackClick(1)} />
-              {fileEditing && <SaveButton onClick={onSave} />}
-            </Flex>
-          </Box>
+        <Box bgGradient="linear(to-r, #f58f0a, #f5390a)" h="40px">
+          <Flex justifyContent="flex-start" gap={5}>
+            <BackButton onClick={() => handleBackClick(1)} />
+            {fileEditing && <SaveButton onClick={onSave} />}
+          </Flex>
         </Box>
         <Flex flexDirection="row" height="100%">
           <Box borderRight="1px solid #ddd">
@@ -147,7 +145,6 @@ function App() {
               <Box bgGradient="linear(to-t,,#f5390a,  #f58f0a)">
                 <Navbar />
               </Box>
-
               {contentShow && (
                 <>
                   {contentShow === "commit" && <CommitUI />}
