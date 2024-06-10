@@ -38,7 +38,7 @@ const EditorComponent = forwardRef((_, ref) => {
           <div
             style={{
               width: "100%",
-              height: "80vh",
+              height: "90vh",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -57,7 +57,7 @@ const EditorComponent = forwardRef((_, ref) => {
       return (
         <Box>
           <Editor
-            height="75vh"
+            height="90vh"
             path={fileEditing.path}
             defaultLanguage={
               fileEditing.language === undefined

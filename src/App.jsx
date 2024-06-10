@@ -75,7 +75,7 @@ function App() {
       const queryParams = new URLSearchParams({
         project_id: params.project_id,
         ref: params.branch,
-        recursive: true,
+        recursive: false,
       }).toString();
 
       try {
@@ -151,7 +151,7 @@ function App() {
         </Box>
         <Flex flexDirection="row" height="100%">
           <Box borderRight="1px solid #ddd">
-            <Flex flexDirection="row" height="100%">
+            <Flex marginRight={"44px"} flexDirection="row" height="100%">
               <Box
                 position={"fixed"}
                 h={"100%"}
@@ -173,13 +173,20 @@ function App() {
           </Box>
           <Box flex="1">
             <Flex flexDirection="column" height="100%">
-              <Box flex="1">
+              <Box position="relative" flex="1">
                 <TabsEditing />
-                <Box bg="transparent">
+                <Box position="relative" bg="transparent">
                   <EditorComponent ref={editorRef} />
                 </Box>
               </Box>
-              <Box bg="#dd631c" w={"100%"} paddingY={"8px"}>
+              <Box
+                zIndex="7"
+                position="fixed"
+                bottom="0"
+                bg="#dd631c"
+                w={"100%"}
+                paddingY={"8px"}
+              >
                 <Comment isContentShow={contentShow} />
               </Box>
             </Flex>

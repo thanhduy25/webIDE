@@ -55,7 +55,7 @@ const Comment = ({ isContentShow }) => {
         {isOpen ? <MdArrowDropUp /> : <MdArrowDropDown />}
         Comment
       </Button>
-      <Collapse in={isOpen} animateOpacity>
+      <Collapse in={isOpen} animateOpacity style={{ maxHeight: "none" }}>
         <Flex
           spacing="5px"
           paddingLeft={"8px"}

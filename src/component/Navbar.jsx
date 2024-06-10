@@ -38,6 +38,7 @@ const Navbar = () => {
 
   return (
     <Box
+      zIndex={"10"}
       color="black"
       width="45px"
       height="100%"
