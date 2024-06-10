@@ -29,7 +29,7 @@ const TabsEditing = () => {
               top={"0"}
               key={path}
               color={"#742f0a"}
-              bgColor={isCurrentTabPath(path) ? "white" : "#ebccbb"}
+              bgColor={isCurrentTabPath(path) ? "#ebccbb" : "white"}
               onClick={() => {
                 dispatch(setFileEditing(fileOpening));
               }}
