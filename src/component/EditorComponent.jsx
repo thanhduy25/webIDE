@@ -2,9 +2,7 @@ import { Box, Image } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
 import React, { forwardRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import TabsEditing from "./Editor/TabsEditing";
 import { setFileEditing } from "../store/editorSlice";
-import { useHotkeys } from "react-hotkeys-hook";
 
 const EditorComponent = forwardRef((_, ref) => {
   const dispatch = useDispatch();
@@ -17,9 +15,6 @@ const EditorComponent = forwardRef((_, ref) => {
   }
 
   const handleEditorChange = (value) => {
-    console.log(value);
-    console.log("---", treeDirectoryFlatten[fileEditing.path].content);
-    console.log(value !== treeDirectoryFlatten[fileEditing.path].content);
     if (value !== treeDirectoryFlatten[fileEditing.path].content) {
       dispatch(
         setFileEditing({ ...fileEditing, content: value, hasChanged: true })

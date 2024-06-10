@@ -2,7 +2,7 @@ import { Link, Button } from "@chakra-ui/react";
 
 const BackButton = ({ id }) => {
   const handleBackClick = () => {
-    window.location.href = `http://localhost/mod/gitlab/view.php?id=${id}`;
+    window.history.back();
   };
 
   return (

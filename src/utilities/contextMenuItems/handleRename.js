@@ -84,7 +84,6 @@ const handleRename = (name, fileTarget, treeFlatten, dispatch) => {
             action.action === "update" && action.file_path === fileTargetPath
           );
         });
-        console.log(listActions);
 
         listActions.push(
           createMoveAction(

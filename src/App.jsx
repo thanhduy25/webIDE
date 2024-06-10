@@ -13,7 +13,7 @@ import {
 } from "./component";
 
 import { Flex, Box, ChakraProvider } from "@chakra-ui/react";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import axios from "axios";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -34,6 +34,8 @@ import { setFileEditing } from "./store/editorSlice";
 function App() {
   const dispatch = useDispatch();
   const editorRef = useRef(null);
+
+  const { courseId } = useSelector((state) => state.globalData);
 
   const { treeDirectory, fileTarget } = useSelector((state) => state.tree);
   const { isOpen: isOpenModal } = useSelector((state) => state.modal);
@@ -72,7 +74,6 @@ function App() {
             recursive: true,
           }).toString();
 
-          console.log(data.project_id, data.branch);
           try {
             const response = await axios.get(baseUrl + "?" + queryParams);
             dispatch(updateTree(response.data.data));
@@ -168,7 +169,7 @@ function App() {
             h="40px"
           >
             <Flex justifyContent="flex-start" gap={5}>
-              <BackButton />
+              <BackButton id={courseId} />
               {fileEditing && <SaveButton onClick={onSave} />}
             </Flex>
           </Box>

@@ -46,6 +46,16 @@ const CommitUI = () => {
   const actions = actionsString ? JSON.parse(actionsString) : [];
 
   const { treeDirectoryFlatten } = useSelector((state) => state.tree);
+  const { projectId, branch, authorName, authorEmail } = useSelector(
+    (state) => state.globalData
+  );
+
+  const globalData = {
+    projectId,
+    branch,
+    authorName,
+    authorEmail,
+  };
 
   const containerRef = useRef(null);
 
@@ -171,7 +181,7 @@ const CommitUI = () => {
               w="100%"
               h="28px"
               onClick={() => {
-                handleCommit(commitMessage, "", "", treeDirectoryFlatten);
+                handleCommit(commitMessage, treeDirectoryFlatten, globalData);
                 toast({
                   position: "top",
                   title: "Commited !",

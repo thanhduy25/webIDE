@@ -57,7 +57,7 @@ export const treeSlice = createSlice({
           const actionsList = localStorage.actions
             ? JSON.parse(localStorage.actions)
             : [];
-          console.log(action.payload.item);
+
           if (
             action.payload.item.content != action.payload.item.originalContent
           ) {

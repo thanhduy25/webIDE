@@ -45,7 +45,6 @@ const handleFileSelected = async (
       };
 
       actionsList.forEach((action, index) => {
-        console.log(action);
         if (action.action === "move" && action.file_path === item.path) {
           isExistInMoveStatus = {
             status: true,
