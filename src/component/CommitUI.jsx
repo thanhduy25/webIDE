@@ -154,7 +154,7 @@ const CommitUI = () => {
           onMouseDown={handleMouseDown}
         ></Box>
         <VStack>
-          <Box mt={2} justifyContent="flex">
+          <Box w="100%" mt={2} justifyContent="flex">
             <Input
               placeholder="Enter commit message"
               value={commitMessage}

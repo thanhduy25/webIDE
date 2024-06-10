@@ -57,7 +57,7 @@ const EditorComponent = forwardRef((_, ref) => {
       return (
         <Box>
           <Editor
-            height="75vh"
+            height="90vh"
             path={fileEditing.path}
             defaultLanguage={
               fileEditing.language === undefined

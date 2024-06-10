@@ -13,7 +13,7 @@ import {
 } from "./component";
 
 import { Flex, Box, ChakraProvider } from "@chakra-ui/react";
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -47,56 +47,80 @@ function App() {
   //Get data passed from the parent window (view_ide.php)
   useEffect(() => {
     window.onmessage = function ({ data }) {
-      const params = getParams();
-
       if ("author_name" in data && "author_email" in data) {
         dispatch(
           setGlobalData({
-            courseId: params.id,
-            projectId: params.project_id,
-            branch: params.branch,
+            projectId: data.project_id,
+            courseId: data.course_id,
             authorName: data.author_name,
             authorEmail: data.author_email,
+            branch: data.branch,
+            userRole: data.user_role,
           })
         );
+
+        if (localStorage.actions) {
+          localStorage.actions = "";
+        }
+
+        const getFileTree = async () => {
+          const baseUrl = `http://localhost/mod/gitlab/api/index.php/repository/tree`;
+
+          const queryParams = new URLSearchParams({
+            project_id: data.project_id,
+            ref: data.branch,
+            recursive: true,
+          }).toString();
+
+          console.log(data.project_id, data.branch);
+          try {
+            const response = await axios.get(baseUrl + "?" + queryParams);
+            dispatch(updateTree(response.data.data));
+            dispatch(convertTreeDirectoryFlatten());
+          } catch (error) {
+            console.error("Error fetching list of files:", error);
+          }
+        };
+
+        getFileTree();
       }
     };
   }, []);
 
   //Get file tree
-  useEffect(() => {
-    if (localStorage.actions) {
-      localStorage.actions = "";
-    }
+  // useEffect(() => {
+  //   if (localStorage.actions) {
+  //     localStorage.actions = "";
+  //   }
 
-    const getFileTree = async (params) => {
-      const baseUrl = `http://localhost/mod/gitlab/api/index.php/repository/tree`;
+  //   const getFileTree = async (params) => {
+  //     const baseUrl = `http://localhost/mod/gitlab/api/index.php/repository/tree`;
 
-      const queryParams = new URLSearchParams({
-        project_id: params.project_id,
-        ref: params.branch,
-        recursive: true,
-      }).toString();
+  //     const queryParams = new URLSearchParams({
+  //       project_id: params.project_id,
+  //       ref: params.branch,
+  //       recursive: true,
+  //     }).toString();
 
-      try {
-        const response = await axios.get(baseUrl + "?" + queryParams);
-        dispatch(updateTree(response.data.data));
-        dispatch(convertTreeDirectoryFlatten());
-      } catch (error) {
-        console.error("Error fetching list of files:", error);
-      }
-    };
-    const params = getParams();
+  //     try {
+  //       const response = await axios.get(baseUrl + "?" + queryParams);
+  //       dispatch(updateTree(response.data.data));
+  //       dispatch(convertTreeDirectoryFlatten());
+  //     } catch (error) {
+  //       console.error("Error fetching list of files:", error);
+  //     }
+  //   };
+  //   const params = getParams();
 
-    dispatch(
-      setGlobalData({
-        projectId: params.project_id,
-        branch: params.branch,
-      })
-    );
+  //   dispatch(
+  //     setGlobalData({
+  //       projectId: params.project_id,
+  //       branch: params.branch,
+  //     })
+  //   );
 
-    getFileTree(params);
-  }, []);
+  //   getFileTree(params);
+  // }, []);
 
   const onSave = () => {
     dispatch(
@@ -151,7 +175,7 @@ function App() {
         </Box>
         <Flex flexDirection="row" height="100%">
           <Box borderRight="1px solid #ddd">
-            <Flex flexDirection="row" height="100%">
+            <Flex marginRight={"44px"} flexDirection="row" height="100%">
               <Box
                 position={"fixed"}
                 h={"100%"}
@@ -173,13 +197,13 @@ function App() {
           </Box>
           <Box flex="1">
             <Flex flexDirection="column" height="100%">
-              <Box flex="1">
+              <Box position="relative" flex="1">
                 <TabsEditing />
-                <Box bg="transparent">
+                <Box position="relative" bg="transparent">
                   <EditorComponent ref={editorRef} />
                 </Box>
               </Box>
-              <Box bg="#dd631c" w={"100%"} paddingY={"8px"}>
+              <Box bg="#dd631c" w={"100%"} paddingY={"8px"} zIndex="999">
                 <Comment isContentShow={contentShow} />
               </Box>
             </Flex>

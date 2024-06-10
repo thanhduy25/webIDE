@@ -6,6 +6,7 @@ const initialGlobalDataState = {
   branch: null,
   authorName: null,
   authorEmail: null,
+  userRole: null,
 };
 
 export const globalDataSlice = createSlice({
@@ -18,6 +19,7 @@ export const globalDataSlice = createSlice({
       state.branch = action.payload.branch;
       state.authorName = action.payload.authorName;
       state.authorEmail = action.payload.authorEmail;
+      state.userRole = action.payload.userRole;
     },
   },
 });
