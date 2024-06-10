@@ -32,7 +32,6 @@ const getNewFilesAndFolders = () => {
   });
   return newFilesAndFolders;
 };
-console.log(localStorage.getItem("actions"));
 
 const CommitUI = () => {
   const newFilesAndFolders = getNewFilesAndFolders();
@@ -42,6 +41,9 @@ const CommitUI = () => {
   const [commitWidth, setCommitWidth] = useState("300px");
   const commitHeight = "90vh";
   const toast = useToast();
+
+  const actionsString = localStorage.getItem("actions");
+  const actions = actionsString ? JSON.parse(actionsString) : [];
 
   const { treeDirectoryFlatten } = useSelector((state) => state.tree);
 

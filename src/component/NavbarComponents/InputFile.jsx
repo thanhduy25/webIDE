@@ -65,6 +65,7 @@ const InputFile = () => {
     <input
       id="fileInput"
       type="file"
+      accept=""
       style={{ display: "none" }}
       onChange={handleFileChange}
     />

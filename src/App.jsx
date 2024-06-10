@@ -80,7 +80,6 @@ function App() {
 
       try {
         const response = await axios.get(baseUrl + "?" + queryParams);
-        console.log(response.data);
         dispatch(updateTree(response.data.data));
         dispatch(convertTreeDirectoryFlatten());
       } catch (error) {
@@ -130,7 +129,7 @@ function App() {
       )}
 
       <Box
-        width="100vw"
+        width="100%"
         height="100vh"
         onClick={() => dispatch(closeContextMenu())}
       >
@@ -160,30 +159,30 @@ function App() {
               >
                 <Navbar />
               </Box>
-              <Box marginLeft={"50px"}>
-                {contentShow && (
+              {contentShow && (
+                <Box marginLeft={"50px"}>
                   <>
                     {contentShow === "commit" && <CommitUI />}
                     {contentShow === "tree" && (
                       <FileTree data={treeDirectory}></FileTree>
                     )}
                   </>
-                )}
-              </Box>
+                </Box>
+              )}
             </Flex>
           </Box>
           <Box flex="1">
-            <Flex flexDirection="column" height="80%">
+            <Flex flexDirection="column" height="100%">
               <Box flex="1">
                 <TabsEditing />
                 <Box bg="transparent">
                   <EditorComponent ref={editorRef} />
                 </Box>
               </Box>
+              <Box bg="#dd631c" w={"100%"} paddingY={"8px"}>
+                <Comment isContentShow={contentShow} />
+              </Box>
             </Flex>
-            <Box bg="#dd631c" w={"100%"} paddingY={"8px"}>
-              <Comment />
-            </Box>
           </Box>
         </Flex>
       </Box>

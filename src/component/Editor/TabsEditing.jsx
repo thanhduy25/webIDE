@@ -37,7 +37,7 @@ const TabsEditing = () => {
               borderColor={"#612a0b"}
               borderRadius={"0"}
               _hover={{
-                bgColor: isCurrentTabPath(path) ? "#ebccbb" : "white",
+                bgColor: isCurrentTabPath(path) ? "white" : "#ebccbb",
               }}
               paddingRight={"6px"}
             >
