@@ -7,7 +7,7 @@ const checkIsImage = (item) => {
   return (
     item.name.endsWith(".png") ||
     item.name.endsWith(".jpg") ||
-    item.name.endsWith(".jpeg") ||
+    item.name.endsWith(".jpSeg") ||
     item.name.endsWith(".svg")
   );
 };
@@ -23,24 +23,47 @@ const handleFileSelected = async (
 
   const baseUrl = `http://localhost/mod/gitlab/api/index.php/repository/files`;
 
-  const params = new URLSearchParams({
-    project_id: projectId,
-    ref: branch,
-    file_path: item.path,
-  }).toString();
-
   let isImage = false;
 
   if (item.type === "blob") {
     isImage = checkIsImage(item);
     let content = "";
 
-    if (treeFlatten[item.path].content) {
+    if (
+      treeFlatten[item.path].content ||
+      treeFlatten[item.path].content === ""
+    ) {
       content = treeFlatten[item.path].content;
-      itemSelected = { ...treeFlatten[item.path], content };
     } else {
-      const response = await axios.get(baseUrl + "?" + params);
+      const actionsList = localStorage.actions
+        ? JSON.parse(localStorage.actions)
+        : [];
+      let isExistInMoveStatus = {
+        status: false,
+        previous_path: null,
+        index: null,
+      };
 
+      actionsList.forEach((action, index) => {
+        if (action.action === "move" && action.file_path === item.path) {
+          isExistInMoveStatus = {
+            status: true,
+            previous_path: action.previous_path,
+            index,
+          };
+          return;
+        }
+      });
+
+      const params = new URLSearchParams({
+        project_id: projectId,
+        ref: branch,
+        file_path: isExistInMoveStatus.status
+          ? isExistInMoveStatus.previous_path
+          : item.path,
+      }).toString();
+
+      const response = await axios.get(baseUrl + "?" + params);
       content = response.data?.data?.content;
 
       if (content) {
@@ -53,14 +76,30 @@ const handleFileSelected = async (
         content = "";
       }
       itemSelected = { ...item, content, originalContent: content };
-    }
 
-    dispatch(
-      updateTreeDirectoryFlatten({
-        action: "update",
-        item: itemSelected,
-      })
-    );
+      if (isExistInMoveStatus.status) {
+        actionsList[isExistInMoveStatus.index] = {
+          ...actionsList[isExistInMoveStatus.index],
+          content: content,
+          originalContent: content,
+        };
+
+        localStorage.actions = JSON.stringify(actionsList);
+        dispatch(
+          updateTreeDirectoryFlatten({
+            action: "update",
+            item: itemSelected,
+          })
+        );
+      } else {
+        dispatch(
+          updateTreeDirectoryFlatten({
+            action: "update",
+            item: itemSelected,
+          })
+        );
+      }
+    }
 
     dispatch(
       addFileOpening({

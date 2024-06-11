@@ -14,10 +14,13 @@ const NavbarItem = ({ label, icon, onClick }) => {
         icon={icon}
         variant="ghost"
         colorScheme="whiteAlpha"
-        style={{ backgroundColor: "transparent" }}
+        style={{
+          backgroundColor: "transparent",
+          fontSize: "25px",
+          color: "white",
+        }}
         border="0px"
         onClick={onClick}
-        _hover={{ color: "#1a5292", stroke: "blue" }}
       ></IconButton>
     </Tooltip>
   );

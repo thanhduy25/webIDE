@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialEditorState = {
   listFileOpening: {},
   fileEditing: null,
+  colorMode: "dark",
 };
 
 export const editorSlice = createSlice({
@@ -38,10 +39,21 @@ export const editorSlice = createSlice({
 
       state.listFileOpening = newListFileOpening;
     },
+    toggleTheme: (state) => {
+      if (state.colorMode === "dark") {
+        state.colorMode = "light";
+      } else {
+        state.colorMode = "dark";
+      }
+    },
   },
 });
 
-export const { addFileOpening, removeFileOpening, setFileEditing } =
-  editorSlice.actions;
+export const {
+  addFileOpening,
+  removeFileOpening,
+  setFileEditing,
+  toggleTheme,
+} = editorSlice.actions;
 
 export default editorSlice.reducer;

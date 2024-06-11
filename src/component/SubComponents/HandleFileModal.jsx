@@ -22,14 +22,14 @@ const HandleFileModal = () => {
   const { treeDirectoryFlatten, fileTarget } = useSelector(
     (state) => state.tree
   );
+
   const { type, action } = useSelector((state) => state.modal);
 
   const [name, setName] = useState(action == "rename" ? fileTarget.name : "");
   const [existName, setExistName] = useState(false);
 
-  //check dupdicate name
   const isFileNameDuplicate = (newName, treeDirectoryFlatten) => {
-    return treeDirectoryFlatten.some(item => item.name === newName);
+    return treeDirectoryFlatten.some((item) => item.name === newName);
   };
 
   const inputRef = useCallback((node) => {

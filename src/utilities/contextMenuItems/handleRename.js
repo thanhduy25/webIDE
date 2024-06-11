@@ -41,7 +41,7 @@ const handleRename = (name, fileTarget, treeFlatten, dispatch) => {
 
   let newListActions = [];
 
-  const listActions = localStorage.actions
+  let listActions = localStorage.actions
     ? JSON.parse(localStorage.actions)
     : [];
 
@@ -79,7 +79,19 @@ const handleRename = (name, fileTarget, treeFlatten, dispatch) => {
       if (indexRemoveIfDuplicate !== null) {
         listActions.splice(indexRemoveIfDuplicate, 1);
       } else {
-        listActions.push(createMoveAction(fileTargetPath, newPath));
+        listActions = listActions.filter((action) => {
+          return !(
+            action.action === "update" && action.file_path === fileTargetPath
+          );
+        });
+
+        listActions.push(
+          createMoveAction(
+            fileTargetPath,
+            newPath,
+            treeFlatten[fileTargetPath].content
+          )
+        );
       }
     }
 

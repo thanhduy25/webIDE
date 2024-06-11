@@ -51,7 +51,7 @@ const TreeItem = ({ item }) => {
         }
         margin="5px"
         _hover={{
-          bg: "#ececec",
+          bg: "#d8d7d64d",
           textDecoration: "underline",
           cursor: "pointer",
         }}
@@ -61,8 +61,13 @@ const TreeItem = ({ item }) => {
         ) : (
           <Icon color="#dddddd" as={MdInsertDriveFile} />
         )}
-        <Text overflow={"hidden"} whiteSpace={"nowrap"} textOverflow={"ellipsis"} ml="3">{item.name}
-
+        <Text
+          overflow={"hidden"}
+          whiteSpace={"nowrap"}
+          textOverflow={"ellipsis"}
+          ml="3"
+        >
+          {item.name}
         </Text>
       </Flex>
       {isOpenFolder && item.children && (

@@ -7,7 +7,6 @@ import { closeContextMenu } from "../../store/contextMenuSlice";
 import { openModal } from "../../store/modalSlice";
 
 import { openAlertDialog } from "../../store/alertDialogSlice";
-import { compose } from "@reduxjs/toolkit";
 
 const ContextMenu = () => {
   const { fileTarget } = useSelector((state) => state.tree);
@@ -57,6 +56,7 @@ const ContextMenu = () => {
   if (fileTarget.type !== "blob") {
     contextMenuItemList.unshift(...contextMenuItemListFolder);
   }
+
   const menuWidth = 200;
   const menuHeight = 200;
 

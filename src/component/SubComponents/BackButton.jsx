@@ -1,28 +1,35 @@
 import { Link, Button } from "@chakra-ui/react";
+import { IoArrowBackCircle } from "react-icons/io5";
 
 const BackButton = ({ id }) => {
   const handleBackClick = () => {
-    window.location.href = `http://localhost/mod/gitlab/view.php?id=${id}`;
+    window.history.back();
   };
 
   return (
     <Button
-      ml="45px"
-      mt="7px"
+      ml={"3px"}
+      mt="3px"
       variant="solid"
-      // w="45px"
-      h="25px"
-      // color="black"
-      backgroundColor="white"
+      w="25px"
+      h="35px"
+      color="white"
+      backgroundColor="transparent"
       borderRadius="3px"
-      border="0px"
+      border="1px"
       _hover={{
-        bg: "#818181",
+        bg: "white",
         textDecoration: "underline",
       }}
+      fontSize={"35px"}
     >
-      <Link onClick={handleBackClick} color="#ec5d0b" cursor="pointer">
-        Back
+      <Link
+        _hover={{ color: "#813e14" }}
+        onClick={handleBackClick}
+        color="white"
+        cursor="pointer"
+      >
+        <IoArrowBackCircle />
       </Link>
     </Button>
   );

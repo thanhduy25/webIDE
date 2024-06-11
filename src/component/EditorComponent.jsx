@@ -1,20 +1,25 @@
 import { Box, Image } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
-import { forwardRef } from "react";
+import React, { forwardRef, useRef, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-// import TabsEditing from "./Editor/TabsEditing";
 import { setFileEditing } from "../store/editorSlice";
-// import { useHotkeys } from "react-hotkeys-hook";
 
 const EditorComponent = forwardRef((_, ref) => {
   const dispatch = useDispatch();
+  const containerRef = useRef(null);
 
+  const { colorMode } = useSelector((state) => state.editor);
+  console.log(colorMode);
   const { fileEditing } = useSelector((state) => state.editor);
   const { treeDirectoryFlatten } = useSelector((state) => state.tree);
 
-  function handleEditorDidMount(editor, _) {
-    ref.current = editor;
-  }
+  const handleEditorDidMount = useCallback(
+    (editor, _) => {
+      ref.current = editor;
+      resizeEditor();
+    },
+    [ref]
+  );
 
   const handleEditorChange = (value) => {
     if (value !== treeDirectoryFlatten[fileEditing.path].content) {
@@ -28,6 +33,24 @@ const EditorComponent = forwardRef((_, ref) => {
     }
   };
 
+  const resizeEditor = useCallback(() => {
+    if (ref?.current) {
+      ref.current.layout();
+    }
+  }, [ref]);
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(resizeEditor);
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [resizeEditor]);
+
   const componentShow = () => {
     if (fileEditing) {
       if (fileEditing.isImage) {
@@ -35,8 +58,8 @@ const EditorComponent = forwardRef((_, ref) => {
           <div
             style={{
               width: "100%",
-              height: "80vh",
-              display: "flex",
+              height: "90vh",
+              display: "static",
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -50,10 +73,10 @@ const EditorComponent = forwardRef((_, ref) => {
           </div>
         );
       }
+
       return (
-        <Box>
+        <Box ref={containerRef} height="90vh" width="100%">
           <Editor
-            height="75vh"
             path={fileEditing.path}
             defaultLanguage={
               fileEditing.language === undefined
@@ -65,6 +88,7 @@ const EditorComponent = forwardRef((_, ref) => {
             onChange={(value) => {
               handleEditorChange(value);
             }}
+            theme={colorMode === "dark" ? "hc-black" : "vs-light"}
             saveViewState={true}
           />
         </Box>

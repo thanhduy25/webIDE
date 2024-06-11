@@ -24,6 +24,8 @@ const handleAdd = (name, type, fileTarget, treeFlatten, dispatch) => {
     name,
     path: newPath,
     type,
+    content: "",
+    originalContent: "",
   };
 
   if (type === "tree") {

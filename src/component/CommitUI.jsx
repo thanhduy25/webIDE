@@ -10,6 +10,8 @@ import {
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 
+import { useSelector } from "react-redux";
+
 import { handleCommit, handleFileSelected } from "../utilities";
 
 const getNewFilesAndFolders = () => {
@@ -30,7 +32,6 @@ const getNewFilesAndFolders = () => {
   });
   return newFilesAndFolders;
 };
-console.log(localStorage.getItem("actions"));
 
 const CommitUI = () => {
   const newFilesAndFolders = getNewFilesAndFolders();
@@ -41,21 +42,39 @@ const CommitUI = () => {
   const commitHeight = "90vh";
   const toast = useToast();
 
+  const actionsString = localStorage.getItem("actions");
+  const actions = actionsString ? JSON.parse(actionsString) : [];
+
+  const { treeDirectoryFlatten } = useSelector((state) => state.tree);
+  const { projectId, branch, authorName, authorEmail } = useSelector(
+    (state) => state.globalData
+  );
+
+  const globalData = {
+    projectId,
+    branch,
+    authorName,
+    authorEmail,
+  };
+
   const containerRef = useRef(null);
 
   const handleMouseDown = (e) => {
+    e.preventDefault();
     setIsResizing(true);
     setInitialWidth(containerRef.current.clientWidth - e.clientX);
   };
 
   const handleMouseMove = (e) => {
+    e.preventDefault();
     if (isResizing) {
       const newWidth = initialWidth + e.clientX;
       setCommitWidth(newWidth + "px");
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e) => {
+    e.preventDefault();
     setIsResizing(false);
   };
 
@@ -67,10 +86,6 @@ const CommitUI = () => {
       document.removeEventListener("mouseup", handleMouseUp);
     };
   });
-  const files = getNewFilesAndFolders();
-  const actionsString = localStorage.getItem("actions");
-  const actions = actionsString ? JSON.parse(actionsString) : [];
-  console.log(newFilesAndFolders);
 
   const getActionAndColor = (action) => {
     switch (action) {
@@ -125,6 +140,7 @@ const CommitUI = () => {
   return (
     <>
       <Box
+        ref={containerRef}
         style={{
           position: "relative",
           height: commitHeight,
@@ -148,7 +164,7 @@ const CommitUI = () => {
           onMouseDown={handleMouseDown}
         ></Box>
         <VStack>
-          <Box w={"100%"} mt={2} justifyContent="flex">
+          <Box w="100%" mt={2} justifyContent="flex">
             <Input
               placeholder="Enter commit message"
               value={commitMessage}
@@ -165,7 +181,7 @@ const CommitUI = () => {
               w="100%"
               h="28px"
               onClick={() => {
-                handleCommit();
+                handleCommit(commitMessage, treeDirectoryFlatten, globalData);
                 toast({
                   position: "top",
                   title: "Commited !",
