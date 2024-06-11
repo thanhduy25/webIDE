@@ -17,6 +17,7 @@ import {
 } from "./actionStorage";
 
 import { isItemExistedTreeDirectory, handleCommit } from "./common";
+import { validImgFileType, imgFileTypes } from "./fileType.js";
 
 export {
   getParams,
@@ -32,4 +33,6 @@ export {
   isItemExistedTreeDirectory,
   handleCommit,
   extensionFileMapping,
+  validImgFileType,
+  imgFileTypes,
 };

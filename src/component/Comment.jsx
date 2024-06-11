@@ -32,7 +32,8 @@ const Comment = ({ isContentShow }) => {
 
   const handleComment = async () => {
     const response = await axios.post(
-      "http://localhost/mod/gitlab/api/index.php/repository/comments",
+      import.meta.env.VITE_ORIGIN +
+        "/mod/gitlab/api/index.php/repository/comments",
       {
         project_id: projectId,
         sha: branch,
@@ -75,14 +76,16 @@ const Comment = ({ isContentShow }) => {
 
     const getLastCommit = async () => {
       const response = await axios.get(
-        `http://localhost/mod/gitlab/api/index.php/repository/branches?project_id=${projectId}&branch=${branch}`
+        import.meta.env.VITE_ORIGIN +
+          `/mod/gitlab/api/index.php/repository/branches?project_id=${projectId}&branch=${branch}`
       );
       return response.data.data.commit;
     };
 
     const getComments = async (commit) => {
       const response = await axios.get(
-        `http://localhost/mod/gitlab/api/index.php/repository/comments?project_id=${projectId}&sha=${commit.id}`
+        import.meta.env.VITE_ORIGIN +
+          `/mod/gitlab/api/index.php/repository/comments?project_id=${projectId}&sha=${commit.id}`
       );
 
       if (response.data.data) {

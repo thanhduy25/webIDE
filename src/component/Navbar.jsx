@@ -40,7 +40,6 @@ const Navbar = () => {
     <Box
       zIndex={"10"}
       color="black"
-      zIndex={"10"}
       width="45px"
       height="100%"
       display="flex"
@@ -51,7 +50,7 @@ const Navbar = () => {
       onWheel={handleWheel}
     >
       <InputFile />
-      <VStack paddingTop="29px" spacing={1}>
+      <VStack paddingTop="35px" spacing={1}>
         {navbarItems.map(({ label, icon, onClick }, index) => (
           <NavbarItem key={index} label={label} icon={icon} onClick={onClick} />
         ))}

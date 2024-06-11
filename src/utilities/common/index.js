@@ -24,7 +24,8 @@ const handleCommit = async (message, treeFlatten, globalData) => {
   });
 
   const response = await axios.post(
-    "http://localhost/mod/gitlab/api/index.php/repository/commits",
+    import.meta.env.VITE_ORIGIN +
+      "/mod/gitlab/api/index.php/repository/commits",
     {
       id: globalData.projectId,
       branch: globalData.branch,

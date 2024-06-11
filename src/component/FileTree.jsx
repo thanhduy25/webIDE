@@ -3,12 +3,13 @@ import TreeItem from "./TreeItem";
 import { useDispatch } from "react-redux";
 import { openContextMenu } from "../store/contextMenuSlice";
 import { changeFileTarget } from "../store/treeSlice";
+import { toggleFileTree } from "../store/navbarSlide";
 
 const FileTree = ({ data }) => {
   const dispatch = useDispatch();
   const [isResizing, setIsResizing] = useState(false);
   const [initialWidth, setInitialWidth] = useState(null);
-  const [treeWidth, setTreeWidth] = useState("250px");
+  const [treeWidth, setTreeWidth] = useState("300px");
   const [treeHeight] = useState("95vh");
 
   const containerRef = useRef(null);
@@ -24,6 +25,9 @@ const FileTree = ({ data }) => {
     if (isResizing) {
       const newWidth = initialWidth + e.clientX;
       setTreeWidth(newWidth + "px");
+      if (newWidth < 10) {
+        dispatch(toggleFileTree(null));
+      }
     }
   };
 

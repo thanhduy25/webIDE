@@ -5,6 +5,7 @@ import {
   convertFlattenToNestedTreeDirectory,
 } from "../../store/treeSlice.js";
 import { createCreateAction, addAction } from "../../utilities/index.js";
+import { validImgFileType } from "../../utilities/index.js";
 
 const InputFile = () => {
   const { fileTarget } = useSelector((state) => state.tree);
@@ -17,9 +18,9 @@ const InputFile = () => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
+
       reader.onload = (e) => {
         const fileData = e.target.result;
-
         const newItem = {
           id: null,
           name: file.name,
@@ -27,7 +28,7 @@ const InputFile = () => {
             fileTarget === "root"
               ? file.name
               : fileTarget.path + "/" + file.name,
-          content: file.type.includes("image/")
+          content: validImgFileType(file)
             ? fileData
             : atob(fileData.split(",")[1]),
           type: "blob",

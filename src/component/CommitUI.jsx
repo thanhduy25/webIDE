@@ -39,11 +39,11 @@ const CommitUI = () => {
   const [isResizing, setIsResizing] = useState(false);
   const [initialWidth, setInitialWidth] = useState(null);
   const [commitWidth, setCommitWidth] = useState("300px");
+  const [actions, setActions] = useState(
+    localStorage.actions ? JSON.parse(localStorage.actions) : []
+  );
   const commitHeight = "90vh";
   const toast = useToast();
-
-  const actionsString = localStorage.getItem("actions");
-  const actions = actionsString ? JSON.parse(actionsString) : [];
 
   const { treeDirectoryFlatten } = useSelector((state) => state.tree);
   const { projectId, branch, authorName, authorEmail } = useSelector(
@@ -110,6 +110,21 @@ const CommitUI = () => {
           char: "D",
         };
     }
+  };
+
+  const generatePathInfo = (action) => {
+    let pathInfo = {};
+    if (action.action === "move") {
+      pathInfo = {
+        oldPath: action.previous_path,
+        newPath: action.file_path,
+      };
+    } else if (action.action === "delete") {
+      pathInfo = {
+        oldPath: action.file_path,
+      };
+    }
+    return pathInfo;
   };
 
   const renameDeleteCommit = (pathInfo) => {
@@ -182,6 +197,8 @@ const CommitUI = () => {
               h="28px"
               onClick={() => {
                 handleCommit(commitMessage, treeDirectoryFlatten, globalData);
+                setActions([]);
+                setCommitMessage("");
                 toast({
                   position: "top",
                   title: "Commited !",
@@ -211,9 +228,8 @@ const CommitUI = () => {
                   };
                 }
                 return (
-                  <>
+                  <Box key={index}>
                     <Button
-                      key={index}
                       h="20px"
                       bg="transparent"
                       w="100%"
@@ -224,14 +240,12 @@ const CommitUI = () => {
                         action.action === "delete" ? (
                           renameDeleteCommit(pathInfo)
                         ) : (
-                          <ListItem key={index}>
-                            {newFilesAndFolders[index]}
-                          </ListItem>
+                          <ListItem>{newFilesAndFolders[index]}</ListItem>
                         )}
                         <Box color={color}>{char}</Box>
                       </Flex>
                     </Button>
-                  </>
+                  </Box>
                 );
               })}
             </List>

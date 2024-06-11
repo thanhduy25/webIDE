@@ -189,6 +189,7 @@ export const treeSlice = createSlice({
       item = { ...item, content: action.payload.newContent };
 
       action.payload = { ...action.payload, action: "update", item };
+
       treeSlice.caseReducers.updateTreeDirectoryFlatten(state, action);
     },
   },

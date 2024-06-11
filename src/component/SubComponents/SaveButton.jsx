@@ -5,6 +5,7 @@ const SaveButton = ({ onClick }) => {
   const toast = useToast();
   return (
     <Button
+      mr={"8px"}
       mt="7px"
       color="#e25d20"
       colorScheme="blue"

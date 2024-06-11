@@ -11,11 +11,15 @@ export const navbarSlice = createSlice({
   name: "navbar",
   initialState: initialNavbarState,
   reducers: {
-    toggleFileTree: (state) => {
-      if (state.contentShow === TREE) {
-        state.contentShow = null;
+    toggleFileTree: (state, action) => {
+      if (action.payload) {
+        state.contentShow = action.payload;
       } else {
-        state.contentShow = TREE;
+        if (state.contentShow === TREE) {
+          state.contentShow = null;
+        } else {
+          state.contentShow = TREE;
+        }
       }
     },
     toggleCommit: (state) => {

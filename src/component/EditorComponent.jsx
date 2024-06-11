@@ -1,11 +1,12 @@
 import { Box, Image } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
-import React, { forwardRef } from "react";
+import React, { forwardRef, useRef, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setFileEditing } from "../store/editorSlice";
 
 const EditorComponent = forwardRef((_, ref) => {
   const dispatch = useDispatch();
+  const containerRef = useRef(null);
 
   const { fileEditing } = useSelector((state) => state.editor);
   const { treeDirectoryFlatten } = useSelector((state) => state.tree);
@@ -25,6 +26,24 @@ const EditorComponent = forwardRef((_, ref) => {
       );
     }
   };
+
+  const resizeEditor = useCallback(() => {
+    if (ref?.current) {
+      ref.current.layout();
+    }
+  }, [ref]);
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(resizeEditor);
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [resizeEditor]);
 
   const componentShow = () => {
     if (fileEditing) {
@@ -50,9 +69,10 @@ const EditorComponent = forwardRef((_, ref) => {
       }
 
       return (
-        <Box>
+        <Box ref={containerRef} height="90vh" width="100%">
           <Editor
-            height="90vh"
+            height="100%"
+            width="100%"
             path={fileEditing.path}
             defaultLanguage={
               fileEditing.language === undefined
@@ -72,7 +92,11 @@ const EditorComponent = forwardRef((_, ref) => {
   };
 
   // Nếu có file được chọn, hiển thị nội dung của file đó trong Editor
-  return <Box>{componentShow()}</Box>;
+  return (
+    <Box height="100%" width="100%">
+      {componentShow()}
+    </Box>
+  );
 });
 
 export default EditorComponent;

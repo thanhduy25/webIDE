@@ -21,7 +21,8 @@ const handleFileSelected = async (
 ) => {
   let itemSelected = null;
 
-  const baseUrl = `http://localhost/mod/gitlab/api/index.php/repository/files`;
+  const baseUrl =
+    import.meta.env.VITE_ORIGIN + "/mod/gitlab/api/index.php/repository/files";
 
   let isImage = false;
 
