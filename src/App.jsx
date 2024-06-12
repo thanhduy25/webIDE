@@ -1,3 +1,4 @@
+import theme from "./theme";
 import {
   EditorComponent,
   FileTree,
@@ -12,8 +13,15 @@ import {
   TabsEditing,
 } from "./component";
 
-import { Flex, Box, ChakraProvider } from "@chakra-ui/react";
-import { useEffect, useRef } from "react";
+import {
+  Flex,
+  Box,
+  ChakraProvider,
+  useColorMode,
+  IconButton,
+  ColorModeScript,
+} from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -29,7 +37,8 @@ import { handleDelete } from "./utilities";
 import { setGlobalData } from "./store/globalDataSlice";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { setFileEditing } from "./store/editorSlice";
+import { FaSun, FaMoon } from "react-icons/fa";
+import { setFileEditing, toggleTheme } from "./store/editorSlice";
 import { getParams } from "./utilities";
 
 function App() {
@@ -43,7 +52,7 @@ function App() {
   const { isOpen: isOpenAlertDialog } = useSelector(
     (state) => state.alertDialog
   );
-  const { fileEditing } = useSelector((state) => state.editor);
+  const { fileEditing, colorMode } = useSelector((state) => state.editor);
 
   const { contentShow } = useSelector((state) => state.navbar);
 
@@ -92,7 +101,7 @@ function App() {
     };
   }, []);
 
-  //Get file tree
+  // Get file tree
   useEffect(() => {
     if (localStorage.actions) {
       localStorage.actions = "";
@@ -124,6 +133,10 @@ function App() {
       setGlobalData({
         projectId: params.project_id,
         branch: params.branch,
+        courseId: null,
+        authorName: "anonymous",
+        authorEmail: "anonymous@example.com",
+        userRole: null,
       })
     );
 
@@ -147,7 +160,8 @@ function App() {
 
   //render ui
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <ContextMenu />
       {isOpenModal && <HandleFileModal />}
       {isOpenAlertDialog && (
@@ -241,7 +255,12 @@ const MainContainer = ({
   editorRef,
 }) => (
   <Box width="100%" height="100vh" onClick={() => dispatch(closeContextMenu())}>
-    <Header courseId={courseId} fileEditing={fileEditing} onSave={onSave} />
+    <Header
+      courseId={courseId}
+      fileEditing={fileEditing}
+      onSave={onSave}
+      dispatch={dispatch}
+    />
     <Flex flexDirection="row" height="100%">
       <Sidebar contentShow={contentShow} treeDirectory={treeDirectory} />
       <ContentArea contentShow={contentShow} editorRef={editorRef} />
@@ -249,23 +268,38 @@ const MainContainer = ({
   </Box>
 );
 
-const Header = ({ courseId, fileEditing, onSave }) => (
-  <Box
-    padding={"0"}
-    position="fixed"
-    top="0"
-    left="0"
-    zIndex="4"
-    w="100%"
-    bgGradient="linear(to-r, #f58f0a, #f5390a)"
-    h="40px"
-  >
-    <Flex justifyContent="space-between" alignItems="center" paddingX={0}>
-      <BackButton id={courseId} />
-      {fileEditing && <SaveButton onClick={onSave} />}
-    </Flex>
-  </Box>
-);
+const Header = ({ courseId, fileEditing, onSave, dispatch }) => {
+  const { colorMode, toggleColorMode } = useColorMode();
+  return (
+    <Box
+      padding={"0"}
+      position="fixed"
+      top="0"
+      left="0"
+      zIndex="4"
+      w="100%"
+      bgGradient="linear(to-r, #f58f0a, #f5390a)"
+      h="40px"
+    >
+      <Flex justifyContent="space-between" alignItems="center" paddingX={0}>
+        <BackButton id={courseId} />
+        <Box>
+          {fileEditing && <SaveButton onClick={onSave} />}
+          <IconButton
+            aria-label="Toggle Dark Mode"
+            icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
+            onClick={() => {
+              toggleColorMode();
+              dispatch(toggleTheme(colorMode));
+            }}
+            variant="ghost"
+            ml={4}
+          />
+        </Box>
+      </Flex>
+    </Box>
+  );
+};
 
 const Sidebar = ({ contentShow, treeDirectory }) => (
   <Box borderRight="1px solid #ddd">
@@ -287,19 +321,31 @@ const Sidebar = ({ contentShow, treeDirectory }) => (
   </Box>
 );
 
-const ContentArea = ({ contentShow, editorRef }) => (
-  <Box flex={"1"} ml={contentShow ? "0px" : "44px"} overflow="hidden">
-    <Flex flexDirection="column" height="100%">
-      <Box position="relative" flex="1">
-        <TabsEditing />
-        <Box position="relative" bg="transparent" height="100%" width="100%">
-          <EditorComponent ref={editorRef} />
+const ContentArea = ({ contentShow, editorRef }) => {
+  const currentEditorRef = editorRef && editorRef.current;
+  const { colorMode } = useSelector((state) => state.editor);
+  return (
+    <Box flex={"1"} ml={contentShow ? "0px" : "44px"} overflow="hidden">
+      <Flex position="relative" flexDirection="column" height="100%">
+        <Box position="relative" flex="1">
+          <TabsEditing />
+          <Box position="flexd" bg={colorMode === "dark" ? "black" : "white"}>
+            <EditorComponent ref={editorRef} />
+          </Box>
         </Box>
-      </Box>
-      <Box bg="#dd631c" w="100%" paddingY="8px" zIndex="999">
-        <Comment isContentShow={contentShow} />
-      </Box>
-    </Flex>
-  </Box>
-);
+        <Box
+          bg="#dd631c"
+          w="100%"
+          paddingY="8px"
+          zIndex="999"
+          position={"absolute"}
+          bottom={0}
+          right={0}
+        >
+          <Comment isContentShow={contentShow} />
+        </Box>
+      </Flex>
+    </Box>
+  );
+};
 export default App;

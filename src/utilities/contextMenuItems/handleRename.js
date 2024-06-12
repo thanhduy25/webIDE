@@ -3,13 +3,8 @@ import {
   updateTreeDirectoryFlatten,
 } from "../../store/treeSlice";
 import { isItemExistedTreeDirectory } from "../common";
-import {
-  createMoveAction,
-  createDeleteAction,
-  addAction,
-} from "../actionStorage";
+import { createMoveAction } from "../actionStorage";
 import { getFilesInCreateAction } from "../actionStorage";
-import { get } from "lodash";
 
 const handleRename = (name, fileTarget, treeFlatten, dispatch) => {
   const fileTargetPath = fileTarget.path;

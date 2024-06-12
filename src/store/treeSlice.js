@@ -17,7 +17,17 @@ export const treeSlice = createSlice({
       state.fileTarget = action.payload;
     },
     updateTree: (state, action) => {
-      state.treeDirectory = action.payload;
+      const treeDirectoryTemp = action.payload;
+
+      const folderList = treeDirectoryTemp
+        .filter((item) => item.type === "tree")
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      const fileList = treeDirectoryTemp
+        .filter((item) => item.type === "blob")
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      state.treeDirectory = [...folderList, ...fileList];
     },
     convertTreeDirectoryFlatten: (state) => {
       const treeDirectoryFlatten = {};
@@ -181,7 +191,10 @@ export const treeSlice = createSlice({
         });
         highestLevel--;
       }
-      state.treeDirectory = Object.values(treeFlattenClone);
+
+      treeSlice.caseReducers.updateTree(state, {
+        payload: Object.values(treeFlattenClone),
+      });
     },
     handleSave: (state, action) => {
       let item = current(state.treeDirectoryFlatten[action.payload.path]);

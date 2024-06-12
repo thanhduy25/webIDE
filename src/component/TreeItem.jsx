@@ -51,7 +51,7 @@ const TreeItem = ({ item }) => {
         }
         margin="5px"
         _hover={{
-          bg: "#ececec",
+          bg: "#d8d7d64d",
           textDecoration: "underline",
           cursor: "pointer",
         }}

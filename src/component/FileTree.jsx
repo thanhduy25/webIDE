@@ -49,7 +49,7 @@ const FileTree = ({ data }) => {
   return (
     <div
       ref={containerRef}
-      style={{ marginTop: "35px", position: "relative", height: treeHeight }}
+      style={{ marginTop: "40px", position: "relative", height: treeHeight }}
       onContextMenu={(event) => {
         event.preventDefault();
         dispatch(openContextMenu({ xPos: event.clientX, yPos: event.clientY }));

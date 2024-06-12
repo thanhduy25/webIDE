@@ -7,13 +7,18 @@ import { setFileEditing } from "../store/editorSlice";
 const EditorComponent = forwardRef((_, ref) => {
   const dispatch = useDispatch();
   const containerRef = useRef(null);
+  const { colorMode } = useSelector((state) => state.editor);
 
   const { fileEditing } = useSelector((state) => state.editor);
   const { treeDirectoryFlatten } = useSelector((state) => state.tree);
 
-  function handleEditorDidMount(editor, _) {
-    ref.current = editor;
-  }
+  const handleEditorDidMount = useCallback(
+    (editor, _) => {
+      ref.current = editor;
+      resizeEditor();
+    },
+    [ref]
+  );
 
   const handleEditorChange = (value) => {
     if (value !== treeDirectoryFlatten[fileEditing.path].content) {
@@ -84,6 +89,7 @@ const EditorComponent = forwardRef((_, ref) => {
             onChange={(value) => {
               handleEditorChange(value);
             }}
+            theme={colorMode === "dark" ? "hc-black" : "vs-light"}
             saveViewState={true}
           />
         </Box>

@@ -27,7 +27,7 @@ const handleCommit = async (message, treeFlatten, globalData) => {
     import.meta.env.VITE_ORIGIN +
       "/mod/gitlab/api/index.php/repository/commits",
     {
-      id: globalData.projectId,
+      project_id: globalData.projectId,
       branch: globalData.branch,
       commit_message: message,
       author_name: globalData.authorName,
@@ -35,6 +35,7 @@ const handleCommit = async (message, treeFlatten, globalData) => {
       actions: actionsConfirm,
     }
   );
+  console.log(response);
   if (response.data.status === "success") {
     localStorage.actions = "";
   }

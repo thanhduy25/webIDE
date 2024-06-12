@@ -144,7 +144,7 @@ const CommitUI = () => {
           {pathInfo.oldPath}
         </Box>
         {pathInfo.newPath && (
-          <Box ml={"2     px"}>
+          <Box ml={"2px"}>
             <p>{`→ ${pathInfo.newPath}`}</p>
           </Box>
         )}
@@ -216,17 +216,7 @@ const CommitUI = () => {
             <List spacing={1} style={{ textAlign: "left" }}>
               {actions.map((action, index) => {
                 const { color, char } = getActionAndColor(action.action);
-                let pathInfo = {};
-                if (action.action === "move") {
-                  pathInfo = {
-                    oldPath: action.previous_path,
-                    newPath: action.file_path,
-                  };
-                } else if (action.action === "delete") {
-                  pathInfo = {
-                    oldPath: action.file_path,
-                  };
-                }
+                let pathInfo = generatePathInfo(action);
                 return (
                   <Box key={index}>
                     <Button

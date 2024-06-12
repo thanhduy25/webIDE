@@ -29,7 +29,7 @@ const TabsEditing = () => {
               top={"0"}
               key={path}
               color={"#742f0a"}
-              bgColor={isCurrentTabPath(path) ? "#ebccbb" : "white"}
+              bgColor={isCurrentTabPath(path) ? "white" : "#ffa77e85"}
               onClick={() => {
                 dispatch(setFileEditing(fileOpening));
               }}
@@ -37,7 +37,7 @@ const TabsEditing = () => {
               borderColor={"#612a0b"}
               borderRadius={"0"}
               _hover={{
-                bgColor: isCurrentTabPath(path) ? "white" : "#ebccbb",
+                bgColor: isCurrentTabPath(path) ? "#ffa77e85" : "white",
               }}
               paddingRight={"6px"}
             >

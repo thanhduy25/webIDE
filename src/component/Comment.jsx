@@ -41,6 +41,7 @@ const Comment = ({ isContentShow }) => {
       }
     );
     setCommentList([response.data.data, ...commentList]);
+    setComment("");
   };
 
   const handleDate = (date) => {
@@ -74,33 +75,65 @@ const Comment = ({ isContentShow }) => {
   useEffect(() => {
     if (!projectId || !branch) return;
 
-    const getLastCommit = async () => {
+    // const getLastCommit = async () => {
+    //   const response = await axios.get(
+    //     import.meta.env.VITE_ORIGIN +
+    //       `/mod/gitlab/api/index.php/repository/branches?project_id=${projectId}&branch=${branch}`
+    //   );
+    //   return response.data.data.commit;
+    // };
+
+    // const getComments = async (commit) => {
+    //   const response = await axios.get(
+    //     import.meta.env.VITE_ORIGIN +
+    //       `/mod/gitlab/api/index.php/repository/comments?project_id=${projectId}&sha=${commit.id}`
+    //   );
+
+    //   if (response.data.data) {
+    //     const sortByTimeDesc = response.data.data.sort((a, b) => {
+    //       return new Date(b.created_at) - new Date(a.created_at);
+    //     });
+    //     setCommentList(sortByTimeDesc);
+    //   }
+    // };
+
+    // let lastCommit = null;
+
+    // getLastCommit().then((data) => {
+    //   lastCommit = data;
+    //   getComments(lastCommit);
+    // });
+
+    const getListCommit = async () => {
       const response = await axios.get(
         import.meta.env.VITE_ORIGIN +
-          `/mod/gitlab/api/index.php/repository/branches?project_id=${projectId}&branch=${branch}`
+          `/mod/gitlab/api/index.php/repository/commits?project_id=${projectId}&branch=${branch}`
       );
-      return response.data.data.commit;
+
+      return response.data.data;
     };
 
-    const getComments = async (commit) => {
-      const response = await axios.get(
-        import.meta.env.VITE_ORIGIN +
-          `/mod/gitlab/api/index.php/repository/comments?project_id=${projectId}&sha=${commit.id}`
-      );
+    const getAllComments = async (commitList) => {
+      let commentsList = [];
+      for (const commit of commitList) {
+        const response = await axios.get(
+          import.meta.env.VITE_ORIGIN +
+            `/mod/gitlab/api/index.php/repository/comments?project_id=${projectId}&sha=${commit.id}`
+        );
 
-      if (response.data.data) {
-        const sortByTimeDesc = response.data.data.sort((a, b) => {
-          return new Date(b.created_at) - new Date(a.created_at);
-        });
-        setCommentList(sortByTimeDesc);
+        if (response.data.data.length > 0) {
+          commentsList.push(...response.data.data);
+        }
       }
+
+      commentsList.sort((a, b) => {
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+      setCommentList(commentsList);
     };
 
-    let lastCommit = null;
-
-    getLastCommit().then((data) => {
-      lastCommit = data;
-      getComments(lastCommit);
+    getListCommit().then((commitList) => {
+      getAllComments(commitList);
     });
   }, [projectId, branch]);
 

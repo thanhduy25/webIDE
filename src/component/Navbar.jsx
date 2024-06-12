@@ -21,7 +21,7 @@ const Navbar = () => {
   const navbarItems = [
     {
       label: "Tree Directory",
-      icon: <FaFile style={{ fontSize: "25px", color: "white" }} />,
+      icon: <FaFile />,
       onClick: () => dispatch(toggleFileTree()),
     },
     {

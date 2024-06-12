@@ -7,7 +7,7 @@ const checkIsImage = (item) => {
   return (
     item.name.endsWith(".png") ||
     item.name.endsWith(".jpg") ||
-    item.name.endsWith(".jpSeg") ||
+    item.name.endsWith(".jpeg") ||
     item.name.endsWith(".svg")
   );
 };
