@@ -1,23 +1,35 @@
 import { Box, Image } from "@chakra-ui/react";
-import Editor from "@monaco-editor/react";
+import Editor, { useMonaco } from "@monaco-editor/react";
 import React, { forwardRef, useRef, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setFileEditing } from "../store/editorSlice";
+import { handleSave } from "../store/treeSlice";
 
 const EditorComponent = forwardRef((_, ref) => {
   const dispatch = useDispatch();
   const containerRef = useRef(null);
-  const { colorMode } = useSelector((state) => state.editor);
-
-  const { fileEditing } = useSelector((state) => state.editor);
+  const { colorMode, fileEditing } = useSelector((state) => state.editor);
   const { treeDirectoryFlatten } = useSelector((state) => state.tree);
 
   const handleEditorDidMount = useCallback(
-    (editor, _) => {
+    (editor, monaco) => {
       ref.current = editor;
+      ref.current.addCommand(
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+        () => {
+          dispatch(
+            handleSave({
+              path: fileEditing.path,
+              newContent: editor.getValue(),
+            })
+          );
+          dispatch(setFileEditing({ ...fileEditing, hasChanged: false }));
+        },
+        ""
+      );
       resizeEditor();
     },
-    [ref]
+    [ref, fileEditing]
   );
 
   const handleEditorChange = (value) => {
@@ -37,6 +49,38 @@ const EditorComponent = forwardRef((_, ref) => {
       ref.current.layout();
     }
   }, [ref]);
+
+  const monaco = useMonaco();
+
+  useEffect(() => {
+    if (monaco) {
+      // Define the custom theme
+      monaco.editor.defineTheme("myTheme", {
+        base: "vs",
+        inherit: true,
+        rules: [
+          {
+            token: "comment",
+            foreground: "#1388d6",
+            fontStyle: "italic underline",
+          },
+          { token: "url", foreground: "0000FF" },
+          { token: "markup.heading", foreground: "00FF00" },
+        ],
+        colors: {
+          "editor.foreground": "#FFFFFF",
+          "editor.selectionForeground": "#FFFFFF",
+          "editor.background": "#0a1620",
+          "editorCursor.foreground": "#FFFFFF",
+          "editor.lineHighlightBackground": "#dce0e448",
+          "editorLineNumber.foreground": "#fa8321",
+          "editor.selectionBackground": "#dce0e448",
+          "editor.inactiveSelectionBackground": "#dce0e448",
+          "editorLineNumber.activeForeground": "#FFFFFF",
+        },
+      });
+    }
+  }, [monaco]);
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(resizeEditor);
@@ -76,6 +120,7 @@ const EditorComponent = forwardRef((_, ref) => {
       return (
         <Box ref={containerRef} height="90vh" width="100%">
           <Editor
+            loading={<div>Loading...</div>}
             height="100%"
             width="100%"
             path={fileEditing.path}
@@ -89,8 +134,7 @@ const EditorComponent = forwardRef((_, ref) => {
             onChange={(value) => {
               handleEditorChange(value);
             }}
-            theme={colorMode === "dark" ? "hc-black" : "vs-light"}
-            saveViewState={true}
+            theme={colorMode === "dark" ? "myTheme" : "vs-light"}
           />
         </Box>
       );

@@ -15,10 +15,9 @@ const BackButton = () => {
       h="25px"
       color="white"
       backgroundColor="transparent"
-      borderRadius="3px"
-      border="1px"
+      border="0px"
       _hover={{
-        bg: "white",
+        bg: "transparent",
         textDecoration: "underline",
       }}
       fontSize={"35px"}

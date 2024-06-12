@@ -3,6 +3,15 @@ import axios from "axios";
 const isItemExistedTreeDirectory = (treeFlatten, path) =>
   Object.hasOwn(treeFlatten, path);
 
+const checkIsImage = (item) => {
+  return (
+    item.name.endsWith(".png") ||
+    item.name.endsWith(".jpg") ||
+    item.name.endsWith(".jpeg") ||
+    item.name.endsWith(".svg")
+  );
+};
+
 const handleCommit = async (message, treeFlatten, globalData) => {
   const actions = localStorage.actions ? JSON.parse(localStorage.actions) : [];
   if (actions.length === 0) return;
@@ -15,10 +24,19 @@ const handleCommit = async (message, treeFlatten, globalData) => {
     ) {
       const content = treeFlatten[action.file_path].content;
 
-      return {
-        ...action,
-        content,
-      };
+      if (checkIsImage(treeFlatten[action.file_path])) {
+        return {
+          ...action,
+          content: content.split("base64,")[1],
+          encoding: "base64",
+        };
+      }
+
+      if (treeFlatten[action.file_path].name)
+        return {
+          ...action,
+          content,
+        };
     }
     return action;
   });
@@ -35,7 +53,7 @@ const handleCommit = async (message, treeFlatten, globalData) => {
       actions: actionsConfirm,
     }
   );
-  console.log(response);
+
   if (response.data.status === "success") {
     localStorage.actions = "";
   }

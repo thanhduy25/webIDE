@@ -52,7 +52,7 @@ function App() {
   const { isOpen: isOpenAlertDialog } = useSelector(
     (state) => state.alertDialog
   );
-  const { fileEditing, colorMode } = useSelector((state) => state.editor);
+  const { fileEditing } = useSelector((state) => state.editor);
 
   const { contentShow } = useSelector((state) => state.navbar);
 
@@ -102,46 +102,46 @@ function App() {
   }, []);
 
   // Get file tree
-  useEffect(() => {
-    if (localStorage.actions) {
-      localStorage.actions = "";
-    }
+  // useEffect(() => {
+  //   if (localStorage.actions) {
+  //     localStorage.actions = "";
+  //   }
 
-    const getFileTree = async (params) => {
-      const baseUrl =
-        import.meta.env.VITE_ORIGIN +
-        "/mod/gitlab/api/index.php/repository/tree";
+  //   const getFileTree = async (params) => {
+  //     const baseUrl =
+  //       import.meta.env.VITE_ORIGIN +
+  //       "/mod/gitlab/api/index.php/repository/tree";
 
-      const queryParams = new URLSearchParams({
-        project_id: params.project_id,
-        ref: params.branch,
-        recursive: true,
-      }).toString();
+  //     const queryParams = new URLSearchParams({
+  //       project_id: params.project_id,
+  //       ref: params.branch,
+  //       recursive: true,
+  //     }).toString();
 
-      try {
-        const response = await axios.get(baseUrl + "?" + queryParams);
+  //     try {
+  //       const response = await axios.get(baseUrl + "?" + queryParams);
 
-        dispatch(updateTree(response.data.data));
-        dispatch(convertTreeDirectoryFlatten());
-      } catch (error) {
-        console.error("Error fetching list of files:", error);
-      }
-    };
-    const params = getParams();
+  //       dispatch(updateTree(response.data.data));
+  //       dispatch(convertTreeDirectoryFlatten());
+  //     } catch (error) {
+  //       console.error("Error fetching list of files:", error);
+  //     }
+  //   };
+  //   const params = getParams();
 
-    dispatch(
-      setGlobalData({
-        projectId: params.project_id,
-        branch: params.branch,
-        courseId: null,
-        authorName: "anonymous",
-        authorEmail: "anonymous@example.com",
-        userRole: null,
-      })
-    );
+  //   dispatch(
+  //     setGlobalData({
+  //       projectId: params.project_id,
+  //       branch: params.branch,
+  //       courseId: null,
+  //       authorName: "anonymous",
+  //       authorEmail: "anonymous@example.com",
+  //       userRole: null,
+  //     })
+  //   );
 
-    getFileTree(params);
-  }, []);
+  //   getFileTree(params);
+  // }, []);
 
   const onSave = () => {
     dispatch(
