@@ -27,7 +27,9 @@ const handleCommit = async (message, treeFlatten, globalData) => {
       if (checkIsImage(treeFlatten[action.file_path])) {
         return {
           ...action,
-          content: content.split("base64,")[1],
+          content: content?.includes("base64,")
+            ? content.split("base64,")[1]
+            : content,
           encoding: "base64",
         };
       }
@@ -51,7 +53,8 @@ const handleCommit = async (message, treeFlatten, globalData) => {
       author_name: globalData.authorName,
       author_email: globalData.authorEmail,
       actions: actionsConfirm,
-    }
+    },
+    {}
   );
 
   if (response.data.status === "success") {

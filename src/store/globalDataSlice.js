@@ -7,6 +7,7 @@ const initialGlobalDataState = {
   authorName: null,
   authorEmail: null,
   userRole: null,
+  isLocked: false,
 };
 
 export const globalDataSlice = createSlice({
@@ -20,6 +21,7 @@ export const globalDataSlice = createSlice({
       state.authorName = action.payload.authorName;
       state.authorEmail = action.payload.authorEmail;
       state.userRole = action.payload.userRole;
+      state.isLocked = action.payload.isLocked;
     },
   },
 });

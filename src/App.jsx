@@ -68,6 +68,7 @@ function App() {
             authorEmail: data.author_email,
             branch: data.branch,
             userRole: data.user_role,
+            isLocked: data.is_locked === "1" ? true : false,
           })
         );
 
@@ -85,10 +86,10 @@ function App() {
             ref: data.branch,
             recursive: true,
           }).toString();
-
           try {
+            console.log(baseUrl + "?" + queryParams);
             const response = await axios.get(baseUrl + "?" + queryParams);
-
+            console.log(response.data);
             dispatch(updateTree(response.data.data));
             dispatch(convertTreeDirectoryFlatten());
           } catch (error) {

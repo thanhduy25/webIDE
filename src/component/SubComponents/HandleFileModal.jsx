@@ -40,6 +40,29 @@ const HandleFileModal = () => {
   const dispatch = useDispatch();
   const onCloseModal = () => dispatch(closeModal());
 
+  const handleConfirmModal = () => {
+    if (action === "add") {
+      const addStatus = handleAdd(
+        name,
+        type,
+        fileTarget,
+        treeDirectoryFlatten,
+        dispatch
+      );
+      if (!addStatus) onCloseModal();
+      setExistName(addStatus);
+    } else {
+      const renameStatus = handleRename(
+        name,
+        fileTarget,
+        treeDirectoryFlatten,
+        dispatch
+      );
+      if (!renameStatus) onCloseModal();
+      setExistName(renameStatus);
+    }
+  };
+
   return (
     <Modal isOpen={true} onClick={onCloseModal}>
       <ModalOverlay />
@@ -56,6 +79,9 @@ const HandleFileModal = () => {
             onChange={(event) => setName(event.target.value)}
             defaultValue={action === "rename" ? fileTarget.name : ""}
             errorBorderColor="red.300"
+            onKeyDown={(event) => {
+              if (event.key === "Enter") handleConfirmModal();
+            }}
           />
           {existName && (
             <Alert status="error">
@@ -68,31 +94,7 @@ const HandleFileModal = () => {
           <Button variant="ghost" mr={3} onClick={onCloseModal}>
             Close
           </Button>
-          <Button
-            colorScheme="blue"
-            onClick={() => {
-              if (action === "add") {
-                const addStatus = handleAdd(
-                  name,
-                  type,
-                  fileTarget,
-                  treeDirectoryFlatten,
-                  dispatch
-                );
-                if (!addStatus) onCloseModal();
-                setExistName(addStatus);
-              } else {
-                const renameStatus = handleRename(
-                  name,
-                  fileTarget,
-                  treeDirectoryFlatten,
-                  dispatch
-                );
-                if (!renameStatus) onCloseModal();
-                setExistName(renameStatus);
-              }
-            }}
-          >
+          <Button colorScheme="blue" onClick={handleConfirmModal}>
             Create
           </Button>
         </ModalFooter>

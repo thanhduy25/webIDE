@@ -9,6 +9,7 @@ const ContextMenuItem = ({ onClick, children }) => {
         width={"100%"}
         borderRadius={"2px"}
         _hover={{ bg: "#e25a1b", color: "white" }}
+        color="black"
         onClick={onClick}
       >
         {children}

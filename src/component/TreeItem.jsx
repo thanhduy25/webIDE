@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Flex, Text, Icon } from "@chakra-ui/react";
+import { Box, Flex, Text, Icon, textDecoration } from "@chakra-ui/react";
 import { MdFolder, MdInsertDriveFile } from "react-icons/md";
 import { handleFileSelected } from "../utilities";
 
@@ -7,8 +7,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { openContextMenu } from "../store/contextMenuSlice";
 import { changeFileTarget } from "../store/treeSlice";
 
+import { extensionFileMapping } from "../utilities";
+
 const TreeItem = ({ item }) => {
   const dispatch = useDispatch();
+
+  const extension = item.name.split(".").pop();
 
   const { projectId, branch } = useSelector((state) => state.globalData);
   const { treeDirectoryFlatten } = useSelector((state) => state.tree);
@@ -52,12 +56,15 @@ const TreeItem = ({ item }) => {
         margin="5px"
         _hover={{
           bg: "#d8d7d64d",
-          textDecoration: "underline",
+          // textDecoration: "underline",
           cursor: "pointer",
         }}
       >
         {isFolder ? (
           <Icon color="#e7722d" as={MdFolder} />
+        ) : // <Icon color="#dddddd" as={MdInsertDriveFile} />
+        extensionFileMapping[extension]?.class ? (
+          <i className={extensionFileMapping[extension].class} />
         ) : (
           <Icon color="#dddddd" as={MdInsertDriveFile} />
         )}

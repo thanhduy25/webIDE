@@ -46,7 +46,7 @@ const CommitUI = () => {
   const toast = useToast();
 
   const { treeDirectoryFlatten } = useSelector((state) => state.tree);
-  const { projectId, branch, authorName, authorEmail } = useSelector(
+  const { projectId, branch, authorName, authorEmail, isLocked } = useSelector(
     (state) => state.globalData
   );
 
@@ -55,8 +55,9 @@ const CommitUI = () => {
     branch,
     authorName,
     authorEmail,
+    isLocked,
   };
-
+  console.log(globalData.isLocked);
   const containerRef = useRef(null);
 
   const handleMouseDown = (e) => {
@@ -208,6 +209,7 @@ const CommitUI = () => {
                   isClosable: true,
                 });
               }}
+              isDisabled={isLocked}
             >
               Commit
             </Button>

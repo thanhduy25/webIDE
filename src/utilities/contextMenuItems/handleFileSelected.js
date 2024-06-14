@@ -63,7 +63,7 @@ const handleFileSelected = async (
           ? encodeURI(isExistInMoveStatus.previous_path)
           : encodeURI(item.path),
       }).toString();
-      console.log(baseUrl + "?" + params);
+
       const response = await axios.get(baseUrl + "?" + params);
       content = response.data?.data?.content;
 

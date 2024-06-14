@@ -10,6 +10,7 @@ const EditorComponent = forwardRef((_, ref) => {
   const containerRef = useRef(null);
   const { colorMode, fileEditing } = useSelector((state) => state.editor);
   const { treeDirectoryFlatten } = useSelector((state) => state.tree);
+  const { isLocked } = useSelector((state) => state.globalData);
 
   const handleEditorDidMount = useCallback(
     (editor, monaco) => {
@@ -56,27 +57,17 @@ const EditorComponent = forwardRef((_, ref) => {
     if (monaco) {
       // Define the custom theme
       monaco.editor.defineTheme("myTheme", {
-        base: "vs",
+        base: "vs-dark",
         inherit: true,
-        rules: [
-          {
-            token: "comment",
-            foreground: "#1388d6",
-            fontStyle: "italic underline",
-          },
-          { token: "url", foreground: "0000FF" },
-          { token: "markup.heading", foreground: "00FF00" },
-        ],
+        rules: [],
         colors: {
           "editor.foreground": "#FFFFFF",
-          "editor.selectionForeground": "#FFFFFF",
-          "editor.background": "#0a1620",
+          "editor.background": "#010d1a",
           "editorCursor.foreground": "#FFFFFF",
-          "editor.lineHighlightBackground": "#dce0e448",
-          "editorLineNumber.foreground": "#fa8321",
-          "editor.selectionBackground": "#dce0e448",
-          "editor.inactiveSelectionBackground": "#dce0e448",
-          "editorLineNumber.activeForeground": "#FFFFFF",
+          "editor.lineHighlightBackground": "#0000FF20",
+          "editorLineNumber.foreground": "#ce8555",
+          "editor.selectionBackground": "#264F78",
+          "editor.inactiveSelectionBackground": "#88000015",
         },
       });
     }
@@ -127,7 +118,7 @@ const EditorComponent = forwardRef((_, ref) => {
             defaultLanguage={
               fileEditing.language === undefined
                 ? "text"
-                : fileEditing.language.toLowerCase()
+                : fileEditing.language.name.toLowerCase()
             }
             defaultValue={fileEditing.content}
             onMount={handleEditorDidMount}
@@ -135,6 +126,9 @@ const EditorComponent = forwardRef((_, ref) => {
               handleEditorChange(value);
             }}
             theme={colorMode === "dark" ? "myTheme" : "vs-light"}
+            options={{
+              readOnly: isLocked,
+            }}
           />
         </Box>
       );

@@ -18,6 +18,8 @@ import axios from "axios";
 
 import { useSelector } from "react-redux";
 
+import { IoGitCommit } from "react-icons/io5";
+
 const Comment = ({ isContentShow }) => {
   const { isOpen, onToggle } = useDisclosure();
 
@@ -105,11 +107,15 @@ const Comment = ({ isContentShow }) => {
     // });
 
     const getListCommit = async () => {
+      console.log(
+        import.meta.env.VITE_ORIGIN +
+          `/mod/gitlab/api/index.php/repository/commits?project_id=${projectId}&branch=${branch}`
+      );
       const response = await axios.get(
         import.meta.env.VITE_ORIGIN +
           `/mod/gitlab/api/index.php/repository/commits?project_id=${projectId}&branch=${branch}`
       );
-
+      console.log(response.data);
       return response.data.data;
     };
 
@@ -231,6 +237,10 @@ const Comment = ({ isContentShow }) => {
                   paddingBottom="8px"
                 >
                   <Heading size="sm">
+                    <Flex w="100%">
+                      {" "}
+                      <IoGitCommit />
+                    </Flex>
                     <Flex w="100%" justifyContent="space-between">
                       <Flex alignItems="center">
                         <Text>{cmt.author.name}</Text>
