@@ -115,7 +115,6 @@ const Comment = ({ isContentShow }) => {
         import.meta.env.VITE_ORIGIN +
           `/mod/gitlab/api/index.php/repository/commits?project_id=${projectId}&branch=${branch}`
       );
-      console.log(response.data);
       return response.data.data;
     };
 
